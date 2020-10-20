@@ -41,6 +41,7 @@ import java.util.List;
 
 	public String mobModelName;
 	public String mobModelTexture;
+	public Procedure mobModelDynamicTexture;
 	public String mobModelGlowTexture;
 
 	public double modelWidth, modelHeight, modelShadowSize;
