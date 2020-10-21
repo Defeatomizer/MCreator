@@ -176,7 +176,7 @@ public class ProcedureSelector extends JPanel {
 		} else if (returnType == null) {
 			procwrap = PanelUtils.westAndCenterElement(ComponentUtils.deriveFont(new JLabel(" do:  "), 15), procedures);
 		} else {
-			procwrap = procedures;
+			procwrap = PanelUtils.westAndCenterElement(ComponentUtils.deriveFont(new JLabel(" get: "), 15), procedures);
 		}
 
 		if (allowInlineEditor) {
