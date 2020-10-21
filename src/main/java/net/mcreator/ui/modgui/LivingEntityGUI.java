@@ -89,6 +89,7 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 
 	private ProcedureSelector particleCondition;
 	private ProcedureSelector spawningCondition;
+	private ProcedureSelector mobModelDynamicTexture;
 
 	private final SoundSelector livingSound = new SoundSelector(mcreator);
 	private final SoundSelector hurtSound = new SoundSelector(mcreator);
@@ -303,6 +304,9 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 				L10N.t("elementgui.living_entity.condition_natural_spawn"), VariableElementType.LOGIC,
 				Dependency.fromString("x:number/y:number/z:number/world:world"))
 				.setDefaultName(L10N.t("elementgui.living_entity.condition_use_vanilla"));
+		mobModelDynamicTexture = new ProcedureSelector(this.withEntry("entity/dynamic_texture"), mcreator,
+				L10N.t("elementgui.living_entity.dynamic_texture.procedure"), ProcedureSelector.Side.CLIENT, true, VariableElementType.TEXT,
+				Dependency.fromString("x:number/y:number/z:number/world:world/entity:entity"));
 
 		restrictionBiomes = new BiomeListField(mcreator);
 		breedTriggerItems = new MCItemListField(mcreator, ElementUtil::loadBlocksAndItems);
@@ -345,6 +349,7 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 		JPanel pane6 = new JPanel(new BorderLayout(0, 0));
 		JPanel pane5 = new JPanel(new BorderLayout(0, 0));
 		JPanel pane7 = new JPanel(new BorderLayout(0, 0));
+		JPanel pane8 = new JPanel(new BorderLayout(0, 0));
 
 		JPanel subpane1 = new JPanel(new GridLayout(12, 2, 0, 2));
 
@@ -428,13 +433,17 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 
 		pane1.add("Center", PanelUtils.totalCenterInPanel(subpane1));
 
-		JPanel spo2 = new JPanel(new GridLayout(12, 2, 0, 2));
+		JPanel spo2 = new JPanel(new GridLayout(9, 2, 0, 2));
 
 		spo2.setOpaque(false);
 
 		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/name"),
 				L10N.label("elementgui.living_entity.name")));
 		spo2.add(mobName);
+
+		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/label"),
+				L10N.label("elementgui.living_entity.label")));
+		spo2.add(mobLabel);
 
 		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/model"),
 				L10N.label("elementgui.living_entity.entity_model")));
@@ -458,6 +467,9 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/texture"),
 				L10N.label("elementgui.living_entity.texture")));
 		spo2.add(PanelUtils.centerAndEastElement(mobModelTexture, importmobtexture));
+
+		spo2.add(L10N.label("elementgui.living_entity.dynamic_texture"));
+		spo2.add(mobModelDynamicTexture);
 
 		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/glow_texture"),
 				L10N.label("elementgui.living_entity.glow_texture")));
@@ -543,31 +555,34 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 				L10N.label("elementgui.living_entity.mob_boss")));
 		spo2.add(PanelUtils.join(isBoss, bossBarColor, bossBarType));
 
-		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/label"),
-				L10N.label("elementgui.living_entity.label")));
-		spo2.add(mobLabel);
-
-		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/sound"),
-				L10N.label("elementgui.living_entity.sound")));
-		spo2.add(livingSound);
-
-		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/step_sound"),
-				L10N.label("elementgui.living_entity.step_sound")));
-		spo2.add(stepSound);
-
-		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/hurt_sound"),
-				L10N.label("elementgui.living_entity.hurt_sound")));
-		spo2.add(hurtSound);
-
-		spo2.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/death_sound"),
-				L10N.label("elementgui.living_entity.death_sound")));
-		spo2.add(deathSound);
-
 		ComponentUtils.deriveFont(mobLabel, 16);
 
 		pane2.setOpaque(false);
 
 		pane2.add("Center", PanelUtils.totalCenterInPanel(spo2));
+
+		JPanel snd = new JPanel(new GridLayout(4, 2, 0, 2));
+		snd.setOpaque(false);
+
+		snd.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/sound"),
+				L10N.label("elementgui.living_entity.sound")));
+		snd.add(livingSound);
+
+		snd.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/step_sound"),
+				L10N.label("elementgui.living_entity.step_sound")));
+		snd.add(stepSound);
+
+		snd.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/hurt_sound"),
+				L10N.label("elementgui.living_entity.hurt_sound")));
+		snd.add(hurtSound);
+
+		snd.add(HelpUtils.wrapWithHelpButton(this.withEntry("entity/death_sound"),
+				L10N.label("elementgui.living_entity.death_sound")));
+		snd.add(deathSound);
+
+		pane8.setOpaque(false);
+
+		pane8.add("Center", PanelUtils.totalCenterInPanel(snd));
 
 		JPanel aitop = new JPanel(new GridLayout(2, 2, 10, 10));
 		aitop.setOpaque(false);
@@ -781,7 +796,9 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 
 		pane7.add(PanelUtils.totalCenterInPanel(props));
 		pane7.setOpaque(false);
-		pane7.setOpaque(false);
+
+		pane8.add(PanelUtils.totalCenterInPanel(snd));
+		pane8.setOpaque(false);
 
 		mobModelTexture.setValidator(() -> {
 			if (mobModelTexture.getSelectedItem() == null || mobModelTexture.getSelectedItem().equals(""))
@@ -796,7 +813,8 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 		pane1.setOpaque(false);
 		pane6.setOpaque(false);
 
-		addPage(L10N.t("elementgui.living_entity.page_visual_and_sound"), pane2);
+		addPage(L10N.t("elementgui.common.page_visual"), pane2);
+		addPage(L10N.t("elementgui.living_entity.page_sounds"), pane8);
 		addPage(L10N.t("elementgui.living_entity.page_bahaviour"), pane1);
 		addPage(L10N.t("elementgui.living_entity.page_particles"), pane6);
 		addPage(L10N.t("elementgui.common.page_inventory"), pane7);
@@ -826,6 +844,7 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 
 		particleCondition.refreshListKeepSelected();
 		spawningCondition.refreshListKeepSelected();
+		mobModelDynamicTexture.refreshListKeepSelected();
 
 		ComboBoxUtil.updateComboBoxContents(mobModelTexture, ListUtils.merge(Collections.singleton(""),
 				mcreator.getWorkspace().getFolderManager().getOtherTexturesList().stream().map(File::getName)
@@ -932,6 +951,7 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 		particleSpawningShape.setSelectedItem(mob.particleSpawningShape);
 		particleCondition.setSelectedProcedure(mob.particleCondition);
 		spawningCondition.setSelectedProcedure(mob.spawningCondition);
+		mobModelDynamicTexture.setSelectedProcedure(mob.mobModelDynamicTexture);
 		particleSpawningRadious.setValue(mob.particleSpawningRadious);
 		particleAmount.setValue(mob.particleAmount);
 		breedTriggerItems.setListElements(mob.breedTriggerItems);
@@ -1042,6 +1062,7 @@ public class LivingEntityGUI extends ModElementGUI<Mob> {
 		mob.particleAmount = (int) particleAmount.getValue();
 		mob.particleCondition = particleCondition.getSelectedProcedure();
 		mob.spawningCondition = spawningCondition.getSelectedProcedure();
+		mob.mobModelDynamicTexture = mobModelDynamicTexture.getSelectedProcedure();
 		mob.onStruckByLightning = onStruckByLightning.getSelectedProcedure();
 		mob.whenMobFalls = whenMobFalls.getSelectedProcedure();
 		mob.whenMobDies = whenMobDies.getSelectedProcedure();
