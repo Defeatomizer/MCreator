@@ -96,7 +96,7 @@ public class L10N {
 		else if (key.startsWith("blockly.") || key.startsWith("trigger."))
 			return null;
 		else
-			return key;
+			return t_en(key, parameters);
 	}
 
 	public static String t_en(String key, Object... parameters) {
