@@ -2983,8 +2983,8 @@ loadScripts(document, 'script');</script>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/JButton.html" title="class or interface in javax.swing" class="external-link">JButton</a> add</pre>
 </li>
 <li class="block-list">
-<h5>entryListener</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/JComponent.html" title="class or interface in javax.swing" class="external-link">JComponent</a>&gt; entryListener</pre>
+<h5>entryListeners</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Consumer.html" title="class or interface in java.util.function" class="external-link">Consumer</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/JComponent.html" title="class or interface in javax.swing" class="external-link">JComponent</a>&gt;&gt; entryListeners</pre>
 </li>
 <li class="block-list">
 <h5>gui</h5>
@@ -5537,8 +5537,8 @@ loadScripts(document, 'script');</script>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/java/awt/CardLayout.html" title="class or interface in java.awt" class="external-link">CardLayout</a> cl</pre>
 </li>
 <li class="block-list">
-<h5>defalutValue</h5>
-<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/JPanel.html" title="class or interface in javax.swing" class="external-link">JPanel</a> defalutValue</pre>
+<h5>defaultValue</h5>
+<pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/JPanel.html" title="class or interface in javax.swing" class="external-link">JPanel</a> defaultValue</pre>
 </li>
 <li class="block-list">
 <h5>defaultValueLogic</h5>
@@ -6220,8 +6220,20 @@ loadScripts(document, 'script');</script>
 <h4>Serialized Fields</h4>
 <ul class="block-list">
 <li class="block-list">
+<h5>changed</h5>
+<pre>boolean changed</pre>
+</li>
+<li class="block-list">
 <h5>editingMode</h5>
 <pre>boolean editingMode</pre>
+</li>
+<li class="block-list">
+<h5>elementUpdateListener</h5>
+<pre><a href="net/mcreator/ui/modgui/ModElementChangedListener.html" title="interface in net.mcreator.ui.modgui">ModElementChangedListener</a> elementUpdateListener</pre>
+</li>
+<li class="block-list">
+<h5>listeningEnabled</h5>
+<pre>boolean listeningEnabled</pre>
 </li>
 <li class="block-list">
 <h5>modElement</h5>
@@ -7543,6 +7555,10 @@ loadScripts(document, 'script');</script>
 <li class="block-list">
 <h5>cache</h5>
 <pre><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>,<wbr><a href="net/mcreator/ui/modgui/codeviewer/FileCodeViewer.html" title="class in net.mcreator.ui.modgui.codeviewer">FileCodeViewer</a>&lt;<a href="net/mcreator/ui/modgui/codeviewer/ModElementCodeViewer.html" title="type parameter in ModElementCodeViewer">T</a> extends <a href="net/mcreator/element/GeneratableElement.html" title="class in net.mcreator.element">GeneratableElement</a>&gt;&gt; cache</pre>
+</li>
+<li class="block-list">
+<h5>codeChangeListener</h5>
+<pre><a href="net/mcreator/ui/modgui/ModElementChangedListener.html" title="interface in net.mcreator.ui.modgui">ModElementChangedListener</a> codeChangeListener</pre>
 </li>
 <li class="block-list">
 <h5>modElementGUI</h5>
