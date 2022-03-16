@@ -30,6 +30,7 @@ import net.mcreator.element.types.interfaces.IItemWithModel;
 import net.mcreator.element.types.interfaces.ITabContainedElement;
 import net.mcreator.minecraft.MinecraftImageGenerator;
 import net.mcreator.util.image.ImageUtils;
+import net.mcreator.workspace.Workspace;
 import net.mcreator.workspace.elements.ModElement;
 import net.mcreator.workspace.resources.Model;
 import net.mcreator.workspace.resources.TexturedModel;
@@ -38,10 +39,8 @@ import javax.annotation.Nonnull;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused") public class Block extends GeneratableElement
@@ -58,6 +57,9 @@ import java.util.stream.Collectors;
 	public int rotationMode;
 	public boolean emissiveRendering;
 	public boolean displayFluidOverlay;
+
+	private final LinkedHashMap<String, PropertyEntry> customProperties;
+	private final LinkedHashMap<String, ModelEntry> modelsMap;
 
 	public String itemTexture;
 	public String particleTexture;
@@ -187,6 +189,9 @@ import java.util.stream.Collectors;
 	public Block(ModElement element) {
 		super(element);
 
+		this.customProperties = new LinkedHashMap<>();
+		this.modelsMap = new LinkedHashMap<>();
+
 		this.tintType = "No tint";
 		this.boundingBoxes = new ArrayList<>();
 		this.spawnWorldTypes = new ArrayList<>();
@@ -211,6 +216,10 @@ import java.util.stream.Collectors;
 		if (blockBase != null && !blockBase.equals(""))
 			return -1;
 		return renderType;
+	}
+
+	public List<PropertyEntry> getEnumProperties() {
+		return customProperties.values().stream().filter(e -> e.type.equals("Enum")).collect(Collectors.toList());
 	}
 
 	public boolean hasCustomDrop() {
@@ -242,12 +251,7 @@ import java.util.stream.Collectors;
 	}
 
 	@Override public Model getItemModel() {
-		Model.Type modelType = Model.Type.BUILTIN;
-		if (renderType == 2)
-			modelType = Model.Type.JSON;
-		else if (renderType == 3)
-			modelType = Model.Type.OBJ;
-		return Model.getModelByParams(getModElement().getWorkspace(), customModelName, modelType);
+		return Model.getModelByParams(getModElement().getWorkspace(), customModelName, Item.decodeModelType(renderType));
 	}
 
 	@Override public Map<String, String> getTextureMap() {
@@ -322,6 +326,53 @@ import java.util.stream.Collectors;
 			baseTypes.add(BaseType.BLOCKENTITY);
 
 		return baseTypes;
+	}
+
+	public static class PropertyEntry {
+		public String name;
+		public String type;
+		public boolean defaultLogicValue;
+		public int defaultNumberValue;
+		public int minNumberValue;
+		public int maxNumberValue;
+		public String[] enumValues;
+
+		public String defaultEnumValue() {
+			return enumValues.length == 0 ? "" : enumValues[0];
+		}
+	}
+
+	public static class ModelEntry implements IBlockWithBoundingBox {
+		public String modelTexture;
+		public String modelTextureTop;
+		public String modelTextureLeft;
+		public String modelTextureFront;
+		public String modelTextureRight;
+		public String modelTextureBack;
+
+		public int renderType;
+		public String modelName;
+		public int xRot;
+		public int yRot;
+		public boolean uvLock;
+
+		public boolean bbOverride;
+		public List<BoxEntry> boundingBoxes = new ArrayList<>();
+
+		public Model getItemModel(Workspace workspace) {
+			return Model.getModelByParams(workspace, modelName, Item.decodeModelType(renderType));
+		}
+
+		public Map<String, String> getTextureMap(Workspace workspace) {
+			Model model = getItemModel(workspace);
+			if (model instanceof TexturedModel textured && textured.getTextureMapping() != null)
+				return textured.getTextureMapping().getTextureMap();
+			return null;
+		}
+
+		@Override public @Nonnull List<BoxEntry> getValidBoundingBoxes() {
+			return boundingBoxes.stream().filter(BoxEntry::isNotEmpty).collect(Collectors.toList());
+		}
 	}
 
 }

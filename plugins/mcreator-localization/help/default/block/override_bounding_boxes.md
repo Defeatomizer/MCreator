@@ -1,0 +1,1 @@
+If checked, base bounding boxes of this block will be replaced with bounding boxes listed below when the state matches.

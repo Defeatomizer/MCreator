@@ -82,6 +82,24 @@ import java.util.Map;
 	public Procedure dispenseSuccessCondition;
 	public Procedure dispenseResultItemstack;
 
+	public static int encodeModelType(Model.Type modelType) {
+		if (modelType == Model.Type.JSON)
+			return 1;
+		else if (modelType == Model.Type.OBJ)
+			return 2;
+		else
+			return 0;
+	}
+
+	public static Model.Type decodeModelType(int modelType) {
+		if (modelType == 1)
+			return Model.Type.JSON;
+		else if (modelType == 2)
+			return Model.Type.OBJ;
+		else
+			return Model.Type.BUILTIN;
+	}
+
 	private Item() {
 		this(null);
 	}
