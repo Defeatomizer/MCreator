@@ -1,0 +1,1 @@
+This option controls whether the textures selected should not be rotated along with the model.

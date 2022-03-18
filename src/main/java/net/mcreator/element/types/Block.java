@@ -58,8 +58,8 @@ import java.util.stream.Collectors;
 	public boolean emissiveRendering;
 	public boolean displayFluidOverlay;
 
-	private final LinkedHashMap<String, PropertyEntry> customProperties;
-	private final LinkedHashMap<String, ModelEntry> modelsMap;
+	public Map<String, PropertyEntry> customProperties;
+	public Map<String, ModelEntry> modelsMap;
 
 	public String itemTexture;
 	public String particleTexture;
@@ -331,6 +331,9 @@ import java.util.stream.Collectors;
 	public static class PropertyEntry {
 		public String name;
 		public String type;
+		public boolean builtin;
+		public String builtinName;
+
 		public boolean defaultLogicValue;
 		public int defaultNumberValue;
 		public int minNumberValue;
@@ -343,6 +346,8 @@ import java.util.stream.Collectors;
 	}
 
 	public static class ModelEntry implements IBlockWithBoundingBox {
+		public String operator;
+
 		public String modelTexture;
 		public String modelTextureTop;
 		public String modelTextureLeft;

@@ -54,14 +54,26 @@ public class RegistryNameValidator implements Validator {
 		return this;
 	}
 
+	public List<Character> getValidChars() {
+		return validChars;
+	}
+
 	public RegistryNameValidator setMaxLength(int maxLength) {
 		this.maxLength = maxLength;
 		return this;
 	}
 
+	public int getMaxLength() {
+		return maxLength;
+	}
+
 	public RegistryNameValidator setAllowEmpty(boolean allowEmpty) {
 		this.allowEmpty = allowEmpty;
 		return this;
+	}
+
+	public boolean isAllowEmpty() {
+		return allowEmpty;
 	}
 
 	@Override public ValidationResult validate() {

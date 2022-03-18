@@ -48,6 +48,7 @@ import net.mcreator.ui.laf.renderer.ItemTexturesComboBoxRenderer;
 import net.mcreator.ui.laf.renderer.ModelComboBoxRenderer;
 import net.mcreator.ui.minecraft.*;
 import net.mcreator.ui.minecraft.boundingboxes.JBoundingBoxList;
+import net.mcreator.ui.minecraft.states.block.JBlockPropertiesStatesList;
 import net.mcreator.ui.procedure.NumberProcedureSelector;
 import net.mcreator.ui.procedure.ProcedureSelector;
 import net.mcreator.ui.validation.AggregatedValidationResult;
@@ -212,13 +213,13 @@ public class BlockGUI extends ModElementGUI<Block> {
 
 	private final JCheckBox spawnParticles = L10N.checkbox("elementgui.block.spawn_particles");
 
-	private final Model normal = new Model.BuiltInModel("Normal");
-	private final Model singleTexture = new Model.BuiltInModel("Single texture");
-	private final Model cross = new Model.BuiltInModel("Cross model");
-	private final Model crop = new Model.BuiltInModel("Crop model");
-	private final Model grassBlock = new Model.BuiltInModel("Grass block");
-	private final SearchableComboBox<Model> renderType = new SearchableComboBox<>(
-			new Model[] { normal, singleTexture, cross, crop, grassBlock });
+	public static final Model normal = new Model.BuiltInModel("Normal");
+	public static final Model singleTexture = new Model.BuiltInModel("Single texture");
+	public static final Model cross = new Model.BuiltInModel("Cross model");
+	public static final Model crop = new Model.BuiltInModel("Crop model");
+	public static final Model grassBlock = new Model.BuiltInModel("Grass block");
+	private final SearchableComboBox<Model> renderType = new SearchableComboBox<>(builtInBlockModels());
+	private JBlockPropertiesStatesList blockStates;
 
 	private final JComboBox<String> transparencyType = new JComboBox<>(
 			new String[] { "SOLID", "CUTOUT", "CUTOUT_MIPPED", "TRANSLUCENT" });
@@ -239,7 +240,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 	private final JTextField specialInfo = new JTextField(25);
 
 	private final ValidationGroup page1group = new ValidationGroup();
-	private final ValidationGroup page3group = new ValidationGroup();
+	private final ValidationGroup page4group = new ValidationGroup();
 
 	private final JComboBox<String> blockBase = new JComboBox<>(
 			new String[] { "Default basic block", "Stairs", "Slab", "Fence", "Wall", "Leaves", "TrapDoor", "Pane",
@@ -330,6 +331,9 @@ public class BlockGUI extends ModElementGUI<Block> {
 				Dependency.fromString("x:number/y:number/z:number/world:world")).setDefaultName(
 				L10N.t("condition.common.no_additional")).makeInline();
 
+		blockStates = new JBlockPropertiesStatesList(mcreator, this);
+		blockStates.setPreferredSize(getPreferredSize());
+
 		blockBase.addActionListener(e -> {
 			renderType.setEnabled(true);
 			disableOffset.setEnabled(true);
@@ -341,6 +345,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 			material.setEnabled(true);
 			connectedSides.setEnabled(true);
 			isWaterloggable.setEnabled(true);
+			blockStates.setEnabled(true);
 
 			if (blockBase.getSelectedItem() != null && blockBase.getSelectedItem().equals("Pane")) {
 				connectedSides.setEnabled(false);
@@ -387,6 +392,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 				hasGravity.setEnabled(false);
 				rotationMode.setEnabled(false);
 				isWaterloggable.setEnabled(false);
+				blockStates.setEnabled(false);
 
 				hasGravity.setSelected(false);
 				rotationMode.setSelectedIndex(0);
@@ -415,6 +421,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 		JPanel pane8 = new JPanel(new BorderLayout(10, 10));
 		JPanel pane9 = new JPanel(new BorderLayout(10, 10));
 		JPanel bbPane = new JPanel(new BorderLayout(10, 10));
+		JPanel bspp = new JPanel(new BorderLayout(10, 10));
 
 		pane8.setOpaque(false);
 
@@ -498,6 +505,9 @@ public class BlockGUI extends ModElementGUI<Block> {
 		JPanel sbbp22 = PanelUtils.totalCenterInPanel(destal);
 
 		sbbp2.setOpaque(false);
+
+		bspp.setOpaque(false);
+		bspp.add(blockStates);
 
 		plantsGrowOn.setOpaque(false);
 
@@ -1171,7 +1181,7 @@ public class BlockGUI extends ModElementGUI<Block> {
 		name.setValidator(new TextFieldValidator(name, L10N.t("elementgui.block.error_block_must_have_name")));
 		name.enableRealtimeValidation();
 
-		page3group.addValidationElement(name);
+		page4group.addValidationElement(name);
 
 		breakSound.getVTextField().setValidator(new ConditionalTextFieldValidator(breakSound.getVTextField(),
 				L10N.t("elementgui.common.error_sound_empty_null"), customSoundType, true));
@@ -1184,14 +1194,15 @@ public class BlockGUI extends ModElementGUI<Block> {
 		fallSound.getVTextField().setValidator(new ConditionalTextFieldValidator(fallSound.getVTextField(),
 				L10N.t("elementgui.common.error_sound_empty_null"), customSoundType, true));
 
-		page3group.addValidationElement(breakSound.getVTextField());
-		page3group.addValidationElement(stepSound.getVTextField());
-		page3group.addValidationElement(placeSound.getVTextField());
-		page3group.addValidationElement(hitSound.getVTextField());
-		page3group.addValidationElement(fallSound.getVTextField());
+		page4group.addValidationElement(breakSound.getVTextField());
+		page4group.addValidationElement(stepSound.getVTextField());
+		page4group.addValidationElement(placeSound.getVTextField());
+		page4group.addValidationElement(hitSound.getVTextField());
+		page4group.addValidationElement(fallSound.getVTextField());
 
 		addPage(L10N.t("elementgui.common.page_visual"), pane2);
 		addPage(L10N.t("elementgui.common.page_bounding_boxes"), bbPane);
+		addPage(L10N.t("elementgui.block.page_block_states"), bspp);
 		addPage(L10N.t("elementgui.common.page_properties"), pane3);
 		addPage(L10N.t("elementgui.common.page_advanced_properties"), pane7);
 		addPage(L10N.t("elementgui.block.page_tile_entity"), pane8);
@@ -1309,11 +1320,10 @@ public class BlockGUI extends ModElementGUI<Block> {
 		placingCondition.refreshListKeepSelected();
 		generateCondition.refreshListKeepSelected();
 
-		ComboBoxUtil.updateComboBoxContents(renderType,
-				ListUtils.merge(Arrays.asList(normal, singleTexture, cross, crop, grassBlock),
-						Model.getModelsWithTextureMaps(mcreator.getWorkspace()).stream()
-								.filter(el -> el.getType() == Model.Type.JSON || el.getType() == Model.Type.OBJ)
-								.collect(Collectors.toList())));
+		ComboBoxUtil.updateComboBoxContents(renderType, ListUtils.merge(Arrays.asList(builtInBlockModels()),
+				Model.getModelsWithTextureMaps(mcreator.getWorkspace()).stream()
+						.filter(el -> el.getType() == Model.Type.JSON || el.getType() == Model.Type.OBJ)
+						.collect(Collectors.toList())));
 
 		ComboBoxUtil.updateComboBoxContents(guiBoundTo, ListUtils.merge(Collections.singleton("<NONE>"),
 				mcreator.getWorkspace().getModElements().stream().filter(var -> var.getType() == ModElementType.GUI)
@@ -1329,14 +1339,20 @@ public class BlockGUI extends ModElementGUI<Block> {
 		ComboBoxUtil.updateComboBoxContents(particleToSpawn, ElementUtil.loadAllParticles(mcreator.getWorkspace()));
 	}
 
+	public static Model[] builtInBlockModels() {
+		return new Model[] { normal, singleTexture, cross, crop, grassBlock };
+	}
+
 	@Override protected AggregatedValidationResult validatePage(int page) {
 		if (page == 0)
 			return new AggregatedValidationResult(page1group);
 		else if (page == 2)
-			return new AggregatedValidationResult(page3group);
-		else if (page == 4)
+			return blockStates.getValidationResult(true);
+		else if (page == 3)
+			return new AggregatedValidationResult(page4group);
+		else if (page == 5)
 			return new AggregatedValidationResult(outSlotIDs, inSlotIDs);
-		else if (page == 7) {
+		else if (page == 8) {
 			if ((int) minGenerateHeight.getValue() >= (int) maxGenerateHeight.getValue()) {
 				return new AggregatedValidationResult.FAIL(L10N.t("elementgui.block.error_minimal_generation_height"));
 			}
@@ -1423,11 +1439,10 @@ public class BlockGUI extends ModElementGUI<Block> {
 		tintType.setSelectedItem(block.tintType);
 		isItemTinted.setSelected(block.isItemTinted);
 
-		if (block.blockBase == null) {
+		if (block.blockBase == null)
 			blockBase.setSelectedIndex(0);
-		} else {
+		else
 			blockBase.setSelectedItem(block.blockBase);
-		}
 
 		plantsGrowOn.setSelected(block.plantsGrowOn);
 		hasInventory.setSelected(block.hasInventory);
@@ -1483,6 +1498,9 @@ public class BlockGUI extends ModElementGUI<Block> {
 
 		if (hasGravity.isEnabled())
 			hasGravity.setEnabled(!isWaterloggable.isSelected());
+
+		blockStates.setProperties(block.customProperties);
+		blockStates.setStates(block.modelsMap);
 
 		updateSoundType();
 	}
@@ -1630,6 +1648,8 @@ public class BlockGUI extends ModElementGUI<Block> {
 		else if (model.equals(grassBlock))
 			block.renderType = 14;
 		block.customModelName = model.getReadableName();
+		block.customProperties = blockStates.getProperties();
+		block.modelsMap = blockStates.getStates();
 
 		return block;
 	}
