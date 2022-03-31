@@ -29,6 +29,7 @@ import net.mcreator.element.types.interfaces.IBlockWithBoundingBox;
 import net.mcreator.element.types.interfaces.IItemWithModel;
 import net.mcreator.element.types.interfaces.ITabContainedElement;
 import net.mcreator.minecraft.MinecraftImageGenerator;
+import net.mcreator.util.StringUtils;
 import net.mcreator.util.image.ImageUtils;
 import net.mcreator.workspace.Workspace;
 import net.mcreator.workspace.elements.ModElement;
@@ -59,7 +60,9 @@ import java.util.stream.Collectors;
 	public boolean displayFluidOverlay;
 
 	public Map<String, PropertyEntry> customProperties;
-	public Map<String, ModelEntry> modelsMap;
+	public String statesType;
+	public Map<String, ModelEntry> modelsMapVariants;
+	public Map<String, ModelEntry> modelsMapMultipart;
 
 	public String itemTexture;
 	public String particleTexture;
@@ -182,6 +185,25 @@ import java.util.stream.Collectors;
 	public int maxGenerateHeight;
 	public Procedure generateCondition;
 
+	/* TODO: Implement blocks logic (from BlockGUI)
+	public static int encodeModelType(Model.Type modelType) {
+		if (modelType == Model.Type.JSON)
+			return 1;
+		else if (modelType == Model.Type.OBJ)
+			return 2;
+		else
+			return 0;
+	}
+
+	public static Model.Type decodeModelType(int modelType) {
+		if (modelType == 1)
+			return Model.Type.JSON;
+		else if (modelType == 2)
+			return Model.Type.OBJ;
+		else
+			return Model.Type.BUILTIN;
+	}*/
+
 	private Block() {
 		this(null);
 	}
@@ -190,7 +212,9 @@ import java.util.stream.Collectors;
 		super(element);
 
 		this.customProperties = new LinkedHashMap<>();
-		this.modelsMap = new LinkedHashMap<>();
+		this.statesType = "Variants";
+		this.modelsMapVariants = new LinkedHashMap<>();
+		this.modelsMapMultipart = new LinkedHashMap<>();
 
 		this.tintType = "No tint";
 		this.boundingBoxes = new ArrayList<>();
@@ -222,6 +246,15 @@ import java.util.stream.Collectors;
 		return customProperties.values().stream().filter(e -> e.type.equals("Enum")).collect(Collectors.toList());
 	}
 
+	public boolean hasCustomStates() {
+		return (statesType.equals("Variants") && !modelsMapVariants.isEmpty()) ^ (statesType.equals("Multipart")
+				&& !modelsMapMultipart.isEmpty());
+	}
+
+	public Map<String, ModelEntry> getStatesMap() {
+		return statesType.equals("Multipart") ? modelsMapMultipart : modelsMapVariants;
+	}
+
 	public boolean hasCustomDrop() {
 		return !customDrop.isEmpty();
 	}
@@ -251,7 +284,8 @@ import java.util.stream.Collectors;
 	}
 
 	@Override public Model getItemModel() {
-		return Model.getModelByParams(getModElement().getWorkspace(), customModelName, Item.decodeModelType(renderType));
+		return Model.getModelByParams(getModElement().getWorkspace(), customModelName,
+				Item.decodeModelType(renderType));
 	}
 
 	@Override public Map<String, String> getTextureMap() {
@@ -339,6 +373,14 @@ import java.util.stream.Collectors;
 		public int minNumberValue;
 		public int maxNumberValue;
 		public String[] enumValues;
+
+		public boolean isNonTextType() {
+			return type.equals("Logic") || type.equals("Number");
+		}
+
+		public String className(GeneratableElement owner) {
+			return owner.getModElement().getName() + StringUtils.snakeToCamel(name);
+		}
 
 		public String defaultEnumValue() {
 			return enumValues.length == 0 ? "" : enumValues[0];

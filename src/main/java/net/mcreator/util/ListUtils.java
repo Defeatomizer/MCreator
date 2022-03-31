@@ -24,6 +24,10 @@ public class ListUtils {
 
 	private static final Random random = new Random();
 
+	public static String[] toStringArray(Collection<?> list) {
+		return list.stream().map(Object::toString).toArray(String[]::new);
+	}
+
 	public static <T> List<T> merge(Collection<T> a, Collection<T> b) {
 		List<T> retval = new ArrayList<>(a);
 		retval.addAll(b);

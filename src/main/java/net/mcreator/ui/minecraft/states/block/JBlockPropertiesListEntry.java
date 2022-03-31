@@ -42,30 +42,28 @@ public class JBlockPropertiesListEntry extends JPanel {
 	private final JComponent container;
 
 	final VTextField name = new VTextField(20);
-	String nameString;
-	Block.PropertyEntry cached = new Block.PropertyEntry();
-	boolean builtin = false;
+	private final Block.PropertyEntry cached = new Block.PropertyEntry();
+	private boolean builtin = false;
 
 	final JComboBox<String> type = new JComboBox<>(new String[] { "Logic", "Number", "Enum" });
 	final JComboBox<String> defaultLogicValue = new JComboBox<>(new String[] { "false", "true" });
 	final JSpinner defaultNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-	final JSpinner minNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+	final JSpinner minNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE - 1, 1));
 	final JSpinner maxNumberValue = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 	final VTextField enumValues = new VTextField(20);
 
 	public JBlockPropertiesListEntry(MCreator mcreator, IHelpContext gui, JPanel parent,
 			List<JBlockPropertiesListEntry> entryList, int propertyId) {
 		super(new FlowLayout(FlowLayout.LEFT));
-		nameString = "property" + propertyId;
-		name.setText(nameString);
+		cached.name = "property" + propertyId;
+		name.setText(cached.name);
 
 		container = PanelUtils.expandHorizontally(this);
 
-		JPanel numVals = PanelUtils.join(minNumberValue, maxNumberValue);
 		CardLayout layout = new CardLayout();
 		JPanel tps = new JPanel(layout);
 		tps.add("Logic", PanelUtils.centerInPanel(defaultLogicValue));
-		tps.add("Number", PanelUtils.centerAndSouthElement(defaultNumberValue, numVals));
+		tps.add("Number", PanelUtils.stack(defaultNumberValue, minNumberValue, maxNumberValue));
 		tps.add("Enum", PanelUtils.centerInPanel(enumValues));
 		type.addActionListener(e -> layout.show(tps, (String) type.getSelectedItem()));
 
@@ -160,14 +158,20 @@ public class JBlockPropertiesListEntry extends JPanel {
 	}
 
 	public Block.PropertyEntry getEntry() {
-		cached.name = name.getText();
-		cached.type = Objects.requireNonNullElse((String) type.getSelectedItem(), "Logic");
-		cached.builtin = builtin;
-		cached.defaultLogicValue = Boolean.parseBoolean((String) defaultLogicValue.getSelectedItem());
-		cached.defaultNumberValue = (int) defaultNumberValue.getValue();
-		cached.minNumberValue = (int) minNumberValue.getValue();
-		cached.maxNumberValue = (int) maxNumberValue.getValue();
-		cached.enumValues = enumValues.getText().split(",");
+		return getEntry(false);
+	}
+
+	Block.PropertyEntry getEntry(boolean cache) {
+		if (cache) {
+			cached.name = name.getText();
+			cached.type = Objects.requireNonNullElse((String) type.getSelectedItem(), "Logic");
+			cached.builtin = builtin;
+			cached.defaultLogicValue = Boolean.parseBoolean((String) defaultLogicValue.getSelectedItem());
+			cached.defaultNumberValue = (int) defaultNumberValue.getValue();
+			cached.minNumberValue = (int) minNumberValue.getValue();
+			cached.maxNumberValue = (int) maxNumberValue.getValue();
+			cached.enumValues = enumValues.getText().split(",");
+		}
 		return cached;
 	}
 
@@ -184,6 +188,8 @@ public class JBlockPropertiesListEntry extends JPanel {
 	}
 
 	public ValidationGroup getValidationResult() {
-		return new AggregatedValidationResult(name);
+		return Objects.equals(type.getSelectedItem(), "Enum") ?
+				new AggregatedValidationResult(name, enumValues) :
+				new AggregatedValidationResult(name);
 	}
 }

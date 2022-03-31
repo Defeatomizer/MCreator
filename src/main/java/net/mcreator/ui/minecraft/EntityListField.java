@@ -34,7 +34,7 @@ public class EntityListField extends JItemListField<EntityEntry> {
 	}
 
 	@Override protected List<EntityEntry> getElementsToAdd() {
-		return DataListSelectorDialog.openMultiSelectorDialog(mcreator, ElementUtil::loadAllEntities,
+		return DataListSelectorDialog.openMultiSelectorDialog(mcreator, ElementUtil::loadAllEntities, false,
 						L10N.t("dialog.list_field.entity_title"), L10N.t("dialog.list_field.entity_message")).stream()
 				.map(e -> new EntityEntry(mcreator.getWorkspace(), e)).toList();
 	}

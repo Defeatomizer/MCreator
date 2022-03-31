@@ -33,18 +33,23 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class DataListSelectorDialog extends ListSelectorDialog<DataListEntry> {
-	public DataListSelectorDialog(MCreator mcreator, Function<Workspace, List<DataListEntry>> entryProvider) {
+	private final boolean rawNames;
+
+	public DataListSelectorDialog(MCreator mcreator, Function<Workspace, List<DataListEntry>> entryProvider,
+			boolean rawNames) {
 		super(mcreator, entryProvider);
-		list.setCellRenderer(new DataListCellRenderer());
+		this.rawNames = rawNames;
+		list.setCellRenderer(rawNames ? new DataListCellRenderer() : new DataListReadableCellRenderer());
 	}
 
 	@Override Predicate<DataListEntry> getFilter(String term) {
-		return e -> e.getReadableName().toLowerCase(Locale.ENGLISH).contains(term.toLowerCase(Locale.ENGLISH));
+		return e -> (rawNames ? e.getName() : e.getReadableName()).toLowerCase(Locale.ENGLISH)
+				.contains(term.toLowerCase(Locale.ENGLISH));
 	}
 
 	public static DataListEntry openSelectorDialog(MCreator mcreator,
-			Function<Workspace, List<DataListEntry>> entryProvider, String title, String message) {
-		var dataListSelector = new DataListSelectorDialog(mcreator, entryProvider);
+			Function<Workspace, List<DataListEntry>> entryProvider, boolean rawNames, String title, String message) {
+		var dataListSelector = new DataListSelectorDialog(mcreator, entryProvider, rawNames);
 		dataListSelector.setMessage(message);
 		dataListSelector.setTitle(title);
 		dataListSelector.setVisible(true);
@@ -52,8 +57,8 @@ public class DataListSelectorDialog extends ListSelectorDialog<DataListEntry> {
 	}
 
 	public static List<DataListEntry> openMultiSelectorDialog(MCreator mcreator,
-			Function<Workspace, List<DataListEntry>> entryProvider, String title, String message) {
-		var dataListSelector = new DataListSelectorDialog(mcreator, entryProvider);
+			Function<Workspace, List<DataListEntry>> entryProvider, boolean rawNames, String title, String message) {
+		var dataListSelector = new DataListSelectorDialog(mcreator, entryProvider, rawNames);
 		dataListSelector.setMessage(message);
 		dataListSelector.list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		dataListSelector.setTitle(title);
@@ -62,15 +67,31 @@ public class DataListSelectorDialog extends ListSelectorDialog<DataListEntry> {
 	}
 
 	private class DataListCellRenderer extends DefaultListCellRenderer {
+
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
 			var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			label.setText(((DataListEntry) value).getReadableName().replace("CUSTOM:", ""));
-			if (((DataListEntry) value).getName().contains("CUSTOM:"))
+			DataListEntry entry = (DataListEntry) value;
+			label.setText(entry.getName().replace("CUSTOM:", ""));
+			if (entry.getName().contains("CUSTOM:"))
 				setIcon(new ImageIcon(ImageUtils.resize(
-						MCItem.getBlockIconBasedOnName(mcreator.getWorkspace(), ((DataListEntry) value).getName())
-								.getImage(), 18)));
+						MCItem.getBlockIconBasedOnName(mcreator.getWorkspace(), entry.getName()).getImage(), 18)));
+			return label;
+		}
+	}
+
+	private class DataListReadableCellRenderer extends DefaultListCellRenderer {
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
+			var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			DataListEntry entry = (DataListEntry) value;
+			label.setText(entry.getReadableName().replace("CUSTOM:", ""));
+			if (entry.getName().contains("CUSTOM:"))
+				setIcon(new ImageIcon(ImageUtils.resize(
+						MCItem.getBlockIconBasedOnName(mcreator.getWorkspace(), entry.getName()).getImage(), 18)));
 			return label;
 		}
 	}

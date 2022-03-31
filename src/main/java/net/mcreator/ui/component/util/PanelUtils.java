@@ -30,18 +30,25 @@ public class PanelUtils {
 	public static JPanel join(int align, Component... c1) {
 		JPanel skup = new JPanel(new FlowLayout(align));
 		skup.setOpaque(false);
-		for (Component c : c1) {
+		for (Component c : c1)
 			skup.add(c);
-		}
 		return skup;
 	}
 
 	public static JPanel join(int align, int hgap, int vgap, Component... c1) {
 		JPanel skup = new JPanel(new FlowLayout(align, hgap, vgap));
 		skup.setOpaque(false);
-		for (Component c : c1) {
+		for (Component c : c1)
 			skup.add(c);
-		}
+		return skup;
+	}
+
+	public static JPanel stack(Component... c1) {
+		JPanel skup = new JPanel();
+		skup.setLayout(new BoxLayout(skup, BoxLayout.Y_AXIS));
+		skup.setOpaque(false);
+		for (Component c : c1)
+			skup.add(c);
 		return skup;
 	}
 

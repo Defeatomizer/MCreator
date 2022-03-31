@@ -1493,14 +1493,16 @@ public class BlockGUI extends ModElementGUI<Block> {
 		if (model != null && model.getType() != null && model.getReadableName() != null)
 			renderType.setSelectedItem(model);
 
+		blockStates.setProperties(block.customProperties);
+		blockStates.setStatesType(block.statesType);
+		blockStates.setStatesVariants(block.modelsMapVariants);
+		blockStates.setStatesMultipart(block.modelsMapMultipart);
+
 		customDrop.setEnabled(!useLootTableForDrops.isSelected());
 		dropAmount.setEnabled(!useLootTableForDrops.isSelected());
 
 		if (hasGravity.isEnabled())
 			hasGravity.setEnabled(!isWaterloggable.isSelected());
-
-		blockStates.setProperties(block.customProperties);
-		blockStates.setStates(block.modelsMap);
 
 		updateSoundType();
 	}
@@ -1648,8 +1650,11 @@ public class BlockGUI extends ModElementGUI<Block> {
 		else if (model.equals(grassBlock))
 			block.renderType = 14;
 		block.customModelName = model.getReadableName();
+
 		block.customProperties = blockStates.getProperties();
-		block.modelsMap = blockStates.getStates();
+		block.statesType = blockStates.getStatesType();
+		block.modelsMapVariants = blockStates.getStatesVariants();
+		block.modelsMapMultipart = blockStates.getStatesMultipart();
 
 		return block;
 	}

@@ -44,29 +44,24 @@ import net.mcreator.util.ListUtils;
 import net.mcreator.workspace.resources.Model;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class JBlockStatesListEntry extends JPanel {
-
-	static final Border selected = BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.MAIN_TINT"), 2);
-	static final Border unselected = BorderFactory.createEmptyBorder(2, 2, 2, 2);
-	static final Border errors = BorderFactory.createLineBorder(new Color(0xb04040), 2);
 
 	private final MCreator mcreator;
 	private final JComponent container;
 	final JButton remove = new JButton(UIRES.get("16px.clear"));
-	boolean editingLimited = true;
 	final JButton window = L10N.button("elementgui.block.custom_state.model_settings");
 
 	final JLabel state = new JLabel();
-	final JRadioButton isDefault = new JRadioButton();
+	final JButton edit = new JButton(UIRES.get("16px.edit.gif"));
 	final JComboBox<String> operator = new JComboBox<>(new String[] { "AND", "OR" });
+	final JToggleButton isDefault;
+	boolean multipart;
 
 	private final TextureHolder texture;
 	private final TextureHolder textureTop;
@@ -84,23 +79,21 @@ public class JBlockStatesListEntry extends JPanel {
 	private final JCheckBox bbOverride = L10N.checkbox("elementgui.block.custom_state.override_bounding_boxes");
 
 	public JBlockStatesListEntry(MCreator mcreator, IHelpContext gui, JPanel parent,
-			List<JBlockStatesListEntry> entryList, int index, Consumer<JBlockStatesListEntry> editButtonListener) {
+			List<JBlockStatesListEntry> entryList, int index, boolean multipart) {
 		super(new FlowLayout(FlowLayout.LEFT));
 		this.mcreator = mcreator;
+		this.multipart = multipart;
 
 		container = PanelUtils.expandHorizontally(this);
-		setBorder(unselected);
 
 		state.setOpaque(true);
 		state.setBackground((Color) UIManager.get("MCreatorLAF.BLACK_ACCENT"));
 
-		JButton edit = new JButton(UIRES.get("16px.edit.gif"));
 		edit.setOpaque(false);
 		edit.setMargin(new Insets(0, 0, 0, 0));
 		edit.setBorder(BorderFactory.createEmptyBorder());
 		edit.setContentAreaFilled(false);
 		edit.setToolTipText(L10N.t("elementgui.block.custom_state.edit_state"));
-		edit.addActionListener(e -> editButtonListener.accept(this));
 
 		JButton copy = new JButton(UIRES.get("16px.copyclipboard"));
 		copy.setOpaque(false);
@@ -115,10 +108,11 @@ public class JBlockStatesListEntry extends JPanel {
 		stateLabel.setOpaque(true);
 		stateLabel.setPreferredSize(new Dimension(300, 30));
 
-		JPanel statePane = PanelUtils.join(edit, copy);
+		JPanel statePane = multipart ? PanelUtils.join(edit, copy) : PanelUtils.join(copy);
 		statePane.setOpaque(true);
 		statePane.setBackground((Color) UIManager.get("MCreatorLAF.LIGHT_ACCENT"));
 
+		isDefault = multipart ? new JCheckBox() : new JRadioButton();
 		add(isDefault);
 		add(stateLabel);
 		add(statePane);
@@ -142,7 +136,7 @@ public class JBlockStatesListEntry extends JPanel {
 				new BlockItemTextureSelector(mcreator, BlockItemTextureSelector.TextureType.BLOCK));
 		textureBack.setValidator(new TileHolderValidator(textureBack));
 
-		textureLeft.setActionListener(event -> {
+		textureLeft.setActionListener(e -> {
 			if (!(texture.has() || textureTop.has() || textureBack.has() || textureFront.has() || textureRight.has())) {
 				texture.setTextureFromTextureName(textureLeft.getID());
 				textureTop.setTextureFromTextureName(textureLeft.getID());
@@ -218,20 +212,22 @@ public class JBlockStatesListEntry extends JPanel {
 		entryList.add(index, this);
 
 		remove.setText(L10N.t("elementgui.block.custom_state.remove"));
-		remove.addActionListener(e -> {
-			entryList.remove(this);
-			parent.remove(container);
-			parent.revalidate();
-			parent.repaint();
-		});
+		remove.addActionListener(e -> removeEntry(parent, entryList));
 		add(remove);
 
 		parent.revalidate();
 		parent.repaint();
 	}
 
+	void removeEntry(JPanel parent, List<JBlockStatesListEntry> entryList) {
+		entryList.remove(JBlockStatesListEntry.this);
+		parent.remove(container);
+		parent.revalidate();
+		parent.repaint();
+	}
+
 	private void modelChanged() {
-		texture.setVisible(false);
+		texture.setVisible(true);
 		textureTop.setVisible(false);
 		textureLeft.setVisible(false);
 		textureFront.setVisible(false);
@@ -239,37 +235,24 @@ public class JBlockStatesListEntry extends JPanel {
 		textureBack.setVisible(false);
 
 		if (BlockGUI.normal.equals(model.getSelectedItem())) {
-			texture.setVisible(true);
 			textureTop.setVisible(true);
 			textureLeft.setVisible(true);
 			textureFront.setVisible(true);
 			textureRight.setVisible(true);
 			textureBack.setVisible(true);
 		} else if (BlockGUI.grassBlock.equals(model.getSelectedItem())) {
-			texture.setVisible(true);
 			textureTop.setVisible(true);
 			textureLeft.setVisible(true);
 			textureFront.setVisible(true);
-		} else {
-			texture.setVisible(true);
 		}
-	}
-
-	public void propertyRenamed(String property, String newName, int index) {
-		String[] stateParts = state.getText().split(",");
-		if (index >= stateParts.length || !stateParts[index].startsWith(property + "="))
-			index = Arrays.stream(stateParts).map(e -> e.split("=")[0]).toList().indexOf(property);
-		stateParts[index] = stateParts[index].replace(property + "=", newName + "=");
-		state.setText(String.join(",", stateParts));
 	}
 
 	@Override public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
 
-		state.setEnabled(enabled);
-		operator.setEnabled(enabled && editingLimited);
+		operator.setEnabled(enabled && multipart);
 		window.setEnabled(enabled);
-		remove.setEnabled(enabled && editingLimited);
+		remove.setEnabled(enabled && multipart);
 
 		texture.setEnabled(enabled);
 		textureTop.setEnabled(enabled);
@@ -287,16 +270,18 @@ public class JBlockStatesListEntry extends JPanel {
 		bbOverride.setEnabled(enabled);
 	}
 
-	void setEditingLimited(boolean limited) {
-		editingLimited = limited;
-		operator.setEnabled(isEnabled() && limited);
-		remove.setEnabled(isEnabled() && limited);
-	}
-
 	public void reloadDataLists() {
 		ComboBoxUtil.updateComboBoxContents(model, ListUtils.merge(Arrays.asList(BlockGUI.builtInBlockModels()),
 				Model.getModelsWithTextureMaps(mcreator.getWorkspace()).stream()
 						.filter(el -> el.getType() == Model.Type.JSON || el.getType() == Model.Type.OBJ).toList()));
+	}
+
+	void propertyRenamed(String property, String newName, int index) {
+		String[] stateParts = state.getText().split(",");
+		if (index >= stateParts.length || !stateParts[index].startsWith(property + "="))
+			index = Arrays.stream(stateParts).map(e -> e.split("=")[0]).toList().indexOf(property);
+		stateParts[index] = stateParts[index].replace(property + "=", newName + "=");
+		state.setText(String.join(",", stateParts));
 	}
 
 	public Block.ModelEntry getEntry() {
@@ -347,12 +332,7 @@ public class JBlockStatesListEntry extends JPanel {
 				textureBack) {
 			@Override public boolean validateIsErrorFree() {
 				boolean retVal = super.validateIsErrorFree();
-
-				if (!retVal)
-					JBlockStatesListEntry.this.setBorder(errors);
-				else
-					JBlockStatesListEntry.this.setBorder(isDefault.isSelected() ? selected : unselected);
-
+				JBlockStatesListEntry.this.setBackground(retVal ? new Color(0x464646) : new Color(0xBD4C4C));
 				return retVal;
 			}
 		};

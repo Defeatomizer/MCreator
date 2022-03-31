@@ -20,7 +20,6 @@
 package net.mcreator.ui.minecraft.states.block;
 
 import net.mcreator.element.types.Block;
-import net.mcreator.generator.mapping.NameMapper;
 import net.mcreator.minecraft.DataListEntry;
 import net.mcreator.minecraft.DataListLoader;
 import net.mcreator.ui.MCreator;
@@ -36,10 +35,12 @@ import net.mcreator.ui.minecraft.states.PropertyData;
 import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.mcreator.ui.validation.validators.PropertyNameValidator;
 import net.mcreator.ui.validation.validators.RegistryNameValidator;
+import net.mcreator.util.ListUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -58,34 +59,40 @@ import java.util.stream.Collectors;
 public class JBlockPropertiesStatesList extends JEntriesList {
 
 	private final List<JBlockPropertiesListEntry> propertiesList = new ArrayList<>();
-	private final List<JBlockStatesListEntry> statesList = new ArrayList<>();
+	private final List<JBlockStatesListEntry> statesListVariants = new ArrayList<>(); //TODO separate lists for both state types
+	private final List<JBlockStatesListEntry> statesListMultipart = new ArrayList<>();
 	private final AtomicInteger propertyId = new AtomicInteger(0);
 
-	private final ButtonGroup statesGroup = new ButtonGroup();
+	private final ButtonGroup variantsGroup = new ButtonGroup();
+	private final ButtonGroup multipartGroup = new ButtonGroup();
+	private final Border selected = BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.MAIN_TINT"), 2);
+	private final Border unselected = BorderFactory.createEmptyBorder(2, 2, 2, 2);
 	private JBlockStatesListEntry lastSelected;
 	private final ItemListener defaultStateUpdater;
-
-	private final NameMapper propertyNameMapper;
-	private final List<String> builtinPropertyNames;
-	private final Map<String, PropertyData> builtinProperties = new LinkedHashMap<>();
-
-	private final PropertyData logicMapper = new PropertyData(Boolean.class, null, null, null);
-	private final BiFunction<Integer, Integer, PropertyData> numMapper = (min, max) -> new PropertyData(Integer.class,
-			min, max, null);
-	private final Function<String[], PropertyData> enumMapper = arr -> new PropertyData(String.class, null, null, arr);
+	private boolean updateRunning = false;
 
 	private final JPanel propertyEntries = new JPanel(new GridLayout(0, 1, 5, 5));
-	private final JPanel stateEntries = new JPanel(new GridLayout(0, 1, 5, 5));
+	private final JPanel stateEntriesVariants = new JPanel(new GridLayout(0, 1, 5, 5));
+	private final JPanel stateEntriesMultipart = new JPanel(new GridLayout(0, 1, 5, 5));
 
 	private final JButton addProperty = new JButton(UIRES.get("16px.add.gif"));
 	private final JButton addState = new JButton(UIRES.get("16px.add.gif"));
 	private final JComboBox<String> statesType = new JComboBox<>(new String[] { "Variants", "Multipart" });
 
+	private final List<String> builtinPropertyNames;
+	//private final Map<String, PropertyData> builtinProperties = new LinkedHashMap<>();
+
+	private final JPopupMenu chooser = new JPopupMenu();
+	private final PropertyData logicMapper = new PropertyData(Boolean.class, null, null, null);
+	private final BiFunction<Integer, Integer, PropertyData> numMapper = (min, max) -> new PropertyData(Integer.class,
+			min, max, null);
+	private final Function<String[], PropertyData> enumMapper = arr -> new PropertyData(String.class, null, null, arr);
+
 	public JBlockPropertiesStatesList(MCreator mcreator, IHelpContext gui) {
 		super(mcreator, new BorderLayout(), gui);
 
 		List<DataListEntry> builtinPropertyList = DataListLoader.loadDataList("blockstateproperties");
-		builtinPropertyList.forEach(e -> {
+		/*builtinPropertyList.forEach(e -> {
 			if (e.getType().equals("Logic")) {
 				builtinProperties.put(e.getName(), logicMapper);
 			} else if (e.getOther() instanceof Map<?, ?> map) {
@@ -94,16 +101,17 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 						numMapper.apply(Integer.parseInt((String) map.get("min")),
 								Integer.parseInt((String) map.get("max"))));
 				case "Enum", "Direction" -> builtinProperties.put(e.getName(), enumMapper.apply(
-						((List<?>) map.get("enumValues")).stream().map(Object::toString).toArray(String[]::new)));
+						ListUtils.toStringArray((List<?>) map.get("enumValues"))));
 				}
 			}
-		});
+		});*/
 		builtinPropertyNames = builtinPropertyList.stream().map(DataListEntry::getName).toList();
-		propertyNameMapper = new NameMapper(mcreator.getWorkspace(), "blockstateproperties");
+		//propertyNameMapper = new NameMapper(mcreator.getWorkspace(), "blockstateproperties");
 
 		setOpaque(false);
 		propertyEntries.setOpaque(false);
-		stateEntries.setOpaque(false);
+		stateEntriesVariants.setOpaque(false);
+		stateEntriesMultipart.setOpaque(false);
 
 		propertyEntries.addContainerListener(new ContainerAdapter() {
 			@Override public void componentRemoved(ContainerEvent e) {
@@ -113,180 +121,6 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 
 		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		buttons.setOpaque(false);
-
-		addProperty.setText(L10N.t("elementgui.block.custom_properties.add"));
-		addProperty.addActionListener(e -> showPropertyTypeChooser());
-		buttons.add(addProperty);
-
-		addState.setText(L10N.t("elementgui.block.custom_states.add"));
-		addState.addActionListener(e -> editState(null));
-		addState.setEnabled(false);
-		buttons.add(addState);
-
-		statesType.addActionListener(e -> {
-			if (e.getModifiers() != 0) {
-				addState.setEnabled(Objects.equals(statesType.getSelectedItem(), "Multipart"));
-				statesList.forEach(s -> s.setEditingLimited(Objects.equals(statesType.getSelectedItem(), "Multipart")));
-			}
-		});
-
-		defaultStateUpdater = e -> {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
-				if (lastSelected != null) {
-					lastSelected.getValidationResult().validateIsErrorFree();
-					lastSelected.window.setEnabled(true);
-				}
-				try {
-					lastSelected = (JBlockStatesListEntry) ((JRadioButton) e.getItemSelectable()).getParent();
-					lastSelected.setBorder(JBlockStatesListEntry.selected);
-					lastSelected.window.setEnabled(false);
-				} catch (ClassCastException ignored) {
-				}
-			}
-		};
-
-		// default state type is "variants", so we initialize default state entry
-		JRadioButton initial = addStatesEntry(0).isDefault;
-		initial.setSelected(true);
-		defaultStateUpdater.itemStateChanged(
-				new ItemEvent(initial, ItemEvent.ITEM_STATE_CHANGED, initial, ItemEvent.SELECTED));
-
-		JPanel topbar = new JPanel(new BorderLayout());
-		topbar.setOpaque(false);
-		topbar.add("West", HelpUtils.wrapWithHelpButton(gui.withEntry("block/states_type"),
-				L10N.label("elementgui.block.custom_states.type")));
-		topbar.add("East", statesType);
-
-		JScrollPane left = new JScrollPane(PanelUtils.pullElementUp(propertyEntries));
-		left.setOpaque(false);
-		left.getViewport().setOpaque(false);
-		left.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR"), 2),
-				L10N.t("elementgui.block.custom_properties.title"), 0, 0, getFont().deriveFont(12.0f),
-				(Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
-
-		JScrollPane right = new JScrollPane(PanelUtils.pullElementUp(stateEntries));
-		right.setOpaque(false);
-		right.getViewport().setOpaque(false);
-		right.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR"), 2),
-				L10N.t("elementgui.block.custom_states.title"), 0, 0, getFont().deriveFont(12.0f),
-				(Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
-
-		add("North", PanelUtils.centerInPanel(HelpUtils.wrapWithHelpButton(gui.withEntry("common/custom_states"),
-				PanelUtils.westAndEastElement(buttons, topbar), SwingConstants.LEFT)));
-		add("Center", PanelUtils.gridElements(1, 0, left, right));
-	}
-
-	@Override public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-
-		addProperty.setEnabled(enabled);
-		addState.setEnabled(enabled);
-		statesType.setEnabled(enabled);
-
-		propertiesList.forEach(e -> e.setEnabled(enabled));
-		statesList.forEach(e -> e.setEnabled(enabled));
-	}
-
-	public void reloadDataLists() {
-		statesList.forEach(JBlockStatesListEntry::reloadDataLists);
-	}
-
-	private JBlockPropertiesListEntry addPropertiesEntry(int propertyId) {
-		JBlockPropertiesListEntry pe = new JBlockPropertiesListEntry(mcreator, gui, propertyEntries, propertiesList,
-				propertyId);
-
-		pe.name.setValidator(new PropertyNameValidator(pe.name, "Property name",
-				() -> propertiesList.stream().map(e -> e.name.getText()), builtinPropertyNames,
-				new RegistryNameValidator(pe.name, "Property name")));
-		pe.name.enableRealtimeValidation();
-		pe.name.getDocument().addDocumentListener(new DocumentListener() {
-			@Override public void insertUpdate(DocumentEvent e) {
-				propertyRenamed(pe);
-			}
-
-			@Override public void removeUpdate(DocumentEvent e) {
-				propertyRenamed(pe);
-			}
-
-			@Override public void changedUpdate(DocumentEvent e) {
-				propertyRenamed(pe);
-			}
-		});
-
-		pe.type.addActionListener(e -> propertyChanged(pe, true));
-		pe.defaultLogicValue.addActionListener(e -> propertyChanged(pe, true));
-		pe.minNumberValue.addChangeListener(e -> propertyChanged(pe, true));
-		pe.maxNumberValue.addChangeListener(e -> propertyChanged(pe, true));
-		pe.enumValues.getDocument().addDocumentListener(new DocumentListener() {
-			@Override public void insertUpdate(DocumentEvent e) {
-				propertyChanged(pe, true);
-			}
-
-			@Override public void removeUpdate(DocumentEvent e) {
-				propertyChanged(pe, true);
-			}
-
-			@Override public void changedUpdate(DocumentEvent e) {
-				propertyChanged(pe, true);
-			}
-		});
-		if (Objects.equals(statesType.getSelectedItem(), "Variants"))
-			propertyChanged(pe, false);
-		registerEntryUI(pe);
-
-		return pe;
-	}
-
-	private JBlockStatesListEntry addStatesEntry(int stateId) {
-		JBlockStatesListEntry se = new JBlockStatesListEntry(mcreator, gui, stateEntries, statesList, stateId,
-				this::editState);
-
-		statesGroup.add(se.isDefault);
-		se.isDefault.addItemListener(defaultStateUpdater);
-		if (Objects.equals(statesType.getSelectedItem(), "Variants"))
-			se.setEditingLimited(false);
-
-		registerEntryUI(se);
-		return se;
-	}
-
-	private void trimStates() {
-		if (propertiesList.size() > 0) {
-			Map<String, PropertyData> propertiesMap = buildPropertiesMap();
-			statesList.forEach(s -> s.state.setText(Arrays.stream(s.state.getText().split(","))
-					.filter(el -> propertiesMap.containsKey(el.split("=")[0])).collect(Collectors.joining(","))));
-			Set<String> duplicates = new HashSet<>(); // when states are trimmed, we remove possible duplicates
-			statesList.stream().toList().forEach(e -> {
-				if (e.state.getText() == null || e.state.getText().equals("") || !duplicates.add(e.state.getText()))
-					e.remove.doClick();
-			});
-		} else if (Objects.equals(statesType.getSelectedItem(), "Variants")) {
-			statesList.forEach(e -> e.remove.doClick());
-		}
-	}
-
-	private String updatePropertyValue(String state, String property, String oldValue, String newValue) {
-		return ("," + state).replaceFirst("," + property + "=" + oldValue + ",", "," + property + "=" + newValue + ",")
-				.substring(1);
-	}
-
-	private List<String> propertyValues(Block.PropertyEntry entry) {
-		List<String> retVal = new ArrayList<>();
-		switch (Objects.requireNonNullElse(entry.type, "Logic")) {
-		case "Logic" -> retVal.addAll(Arrays.asList("false", "true"));
-		case "Number" -> {
-			for (int i = entry.minNumberValue; i <= entry.maxNumberValue; i++)
-				retVal.add(Integer.toString(i));
-		}
-		case "Enum" -> retVal.addAll(Arrays.asList(entry.enumValues));
-		}
-		return retVal;
-	}
-
-	private void showPropertyTypeChooser() {
-		JPopupMenu chooser = new JPopupMenu();
 
 		JMenuItem logic = new JMenuItem("Logic");
 		logic.addActionListener(e -> {
@@ -313,15 +147,140 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		builtin.addActionListener(e -> addBuiltinProperty());
 		chooser.add(builtin);
 
-		chooser.show(addProperty, addProperty.getX(), addProperty.getY() + addProperty.getHeight() + 3);
+		addProperty.setText(L10N.t("elementgui.block.custom_properties.add"));
+		addProperty.addActionListener(
+				e -> chooser.show(addProperty, addProperty.getX(), addProperty.getY() + addProperty.getHeight() + 3));
+		buttons.add(addProperty);
+
+		addState.setText(L10N.t("elementgui.block.custom_states.add"));
+		addState.addActionListener(e -> editState(null));
+		addState.setEnabled(false);
+		buttons.add(addState);
+
+		defaultStateUpdater = e -> {
+			if (lastSelected != null) {
+				lastSelected.setBorder(unselected);
+				lastSelected.window.setEnabled(true);
+			}
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				try {
+					lastSelected = (JBlockStatesListEntry) ((JToggleButton) e.getItemSelectable()).getParent();
+					lastSelected.setBorder(selected);
+					lastSelected.window.setEnabled(false);
+				} catch (ClassCastException ignored) {
+				}
+			}
+		};
+		addInitialState(); // default state type is "variants", so we initialize default state entry
+
+		JPanel topbar = new JPanel(new FlowLayout());
+		topbar.setOpaque(false);
+		topbar.add("West", HelpUtils.wrapWithHelpButton(gui.withEntry("block/states_type"),
+				L10N.label("elementgui.block.custom_states.type")));
+		topbar.add("East", statesType);
+
+		JScrollPane left = new JScrollPane(PanelUtils.pullElementUp(propertyEntries));
+		left.setOpaque(false);
+		left.getViewport().setOpaque(false);
+		left.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR"), 2),
+				L10N.t("elementgui.block.custom_properties.title"), 0, 0, getFont().deriveFont(12.0f),
+				(Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
+
+		CardLayout cards = new CardLayout();
+		JPanel rightCards = new JPanel(cards);
+		rightCards.setOpaque(false);
+		rightCards.add("Variants", stateEntriesVariants);
+		rightCards.add("Multipart", stateEntriesMultipart);
+
+		statesType.addActionListener(e -> {
+			if (e.getModifiers() != 0) {
+				cards.show(rightCards, Objects.requireNonNullElse((String) statesType.getSelectedItem(), "Variants"));
+				addState.setEnabled(Objects.equals(statesType.getSelectedItem(), "Multipart"));
+			}
+		});
+
+		JScrollPane right = new JScrollPane(PanelUtils.pullElementUp(rightCards));
+		right.setOpaque(false);
+		right.getViewport().setOpaque(false);
+		right.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR"), 2),
+				L10N.t("elementgui.block.custom_states.title"), 0, 0, getFont().deriveFont(12.0f),
+				(Color) UIManager.get("MCreatorLAF.BRIGHT_COLOR")));
+
+		add("North", PanelUtils.centerInPanel(HelpUtils.wrapWithHelpButton(gui.withEntry("common/custom_states"),
+				PanelUtils.westAndEastElement(buttons, topbar), SwingConstants.LEFT)));
+		add("Center", PanelUtils.gridElements(1, 0, left, right));
+	}
+
+	@Override public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+
+		addProperty.setEnabled(enabled);
+		addState.setEnabled(enabled);
+		statesType.setEnabled(enabled);
+
+		propertiesList.forEach(e -> e.setEnabled(enabled));
+		statesListVariants.forEach(e -> e.setEnabled(enabled));
+		statesListMultipart.forEach(e -> e.setEnabled(enabled));
+	}
+
+	public void reloadDataLists() {
+		statesListVariants.forEach(JBlockStatesListEntry::reloadDataLists);
+		statesListMultipart.forEach(JBlockStatesListEntry::reloadDataLists);
+	}
+
+	private JBlockPropertiesListEntry addPropertiesEntry(int propertyId) {
+		JBlockPropertiesListEntry pe = new JBlockPropertiesListEntry(mcreator, gui, propertyEntries, propertiesList,
+				propertyId);
+
+		pe.name.setValidator(new PropertyNameValidator(pe.name, "Property name",
+				() -> propertiesList.stream().map(e -> e.name.getText()), builtinPropertyNames,
+				new RegistryNameValidator(pe.name, "Property name")));
+		pe.name.enableRealtimeValidation();
+		pe.name.getDocument().addDocumentListener(new DocumentListener() {
+			@Override public void insertUpdate(DocumentEvent e) {
+				propertyRenamed(pe);
+			}
+
+			@Override public void removeUpdate(DocumentEvent e) {
+				propertyRenamed(pe);
+			}
+
+			@Override public void changedUpdate(DocumentEvent e) {
+				propertyRenamed(pe);
+			}
+		});
+
+		pe.type.addActionListener(e -> propertyChanged(pe, true));
+		pe.minNumberValue.addChangeListener(e -> propertyChanged(pe, true));
+		pe.maxNumberValue.addChangeListener(e -> propertyChanged(pe, true));
+		pe.enumValues.getDocument().addDocumentListener(new DocumentListener() {
+			@Override public void insertUpdate(DocumentEvent e) {
+				propertyChanged(pe, true);
+			}
+
+			@Override public void removeUpdate(DocumentEvent e) {
+				propertyChanged(pe, true);
+			}
+
+			@Override public void changedUpdate(DocumentEvent e) {
+				propertyChanged(pe, true);
+			}
+		});
+		if (Objects.equals(statesType.getSelectedItem(), "Variants"))
+			propertyChanged(pe, false);
+		registerEntryUI(pe);
+
+		return pe;
 	}
 
 	private void addBuiltinProperty() {
 		List<String> names = propertiesList.stream().map(e -> e.name.getText()).toList();
 		DataListEntry property = DataListSelectorDialog.openSelectorDialog(mcreator,
 				w -> DataListLoader.loadDataList("blockstateproperties").stream()
-						.filter(e -> !names.contains(e.getReadableName())).toList(),
-				L10N.t("elementgui.block.custom_properties.add.title"),
+						.filter(e -> !e.getType().endsWith("Special") && !names.contains(e.getReadableName())).toList(),
+				true, L10N.t("elementgui.block.custom_properties.add.title"),
 				L10N.t("elementgui.block.custom_properties.add.message"));
 		if (property.getOther() instanceof Map<?, ?> data) {
 			Block.PropertyEntry entry = new Block.PropertyEntry();
@@ -332,25 +291,91 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 			entry.defaultLogicValue =
 					entry.type.equals("Logic") && Boolean.parseBoolean(data.get("default").toString());
 
-			entry.defaultNumberValue = entry.type.equals("Number") ?
-					Integer.parseInt(data.get("default").toString()) :
-					0;
 			entry.minNumberValue = entry.type.equals("Number") ? Integer.parseInt(data.get("min").toString()) : 0;
 			entry.maxNumberValue = entry.type.equals("Number") ? Integer.parseInt(data.get("max").toString()) : 1;
+			entry.defaultNumberValue = entry.minNumberValue;
 
-			if (entry.type.equals("Enum")) {
+			/*if (entry.type.equals("Enum")) {
 				String[] values = propertyNameMapper.getMapping(property.getName(), 2).split(",");
 				entry.enumValues = Arrays.stream(values).map(e -> e.split(":")[1]).toArray(String[]::new);
 			} else {
 				entry.enumValues = new String[] {};
-			}
+			}*/
+			entry.enumValues = entry.type.equals("Enum") ?
+					ListUtils.toStringArray(((Map<?, ?>) data.get("values")).keySet()) :
+					new String[] {};
 
 			addPropertiesEntry(0).setBuiltin().setEntry(entry.name, entry);
 		}
 	}
 
+	private JBlockStatesListEntry addStatesEntry(int stateId, boolean multipart) {
+		JBlockStatesListEntry se = multipart ?
+				new JBlockStatesListEntry(mcreator, gui, stateEntriesMultipart, statesListMultipart, stateId, true) :
+				new JBlockStatesListEntry(mcreator, gui, stateEntriesVariants, statesListVariants, stateId, false);
+
+		se.setBorder(unselected);
+		se.edit.addActionListener(e -> editState(se));
+		se.isDefault.addItemListener(defaultStateUpdater);
+		(Objects.equals(statesType.getSelectedItem(), "Variants") ? variantsGroup : multipartGroup).add(se.isDefault);
+
+		registerEntryUI(se);
+		return se;
+	}
+
+	private void addInitialState() {
+		JToggleButton initial = addStatesEntry(0, false).isDefault;
+		initial.setSelected(true);
+		defaultStateUpdater.itemStateChanged(
+				new ItemEvent(initial, ItemEvent.ITEM_STATE_CHANGED, initial, ItemEvent.SELECTED));
+	}
+
+	private void trimStates() {
+		if (propertiesList.size() > 0) {
+			Map<String, PropertyData> propertiesMap = buildPropertiesMap();
+			statesListVariants.forEach(s -> s.state.setText(Arrays.stream(s.state.getText().split(","))
+					.filter(el -> propertiesMap.containsKey(el.split("=")[0])).collect(Collectors.joining(","))));
+			Set<String> duplicates = new HashSet<>(); // when states are trimmed, we remove possible duplicates
+			statesListVariants.stream().toList().forEach(e -> {
+				if (e.state.getText() == null || e.state.getText().equals("") || !duplicates.add(e.state.getText()))
+					e.removeEntry(stateEntriesVariants, statesListVariants);
+			});
+		} else if (Objects.equals(statesType.getSelectedItem(), "Variants")) {
+			statesListVariants.forEach(e -> e.removeEntry(stateEntriesVariants, statesListVariants));
+			addInitialState();
+		}
+	}
+
+	private List<String> propertyValues(Block.PropertyEntry entry) {
+		List<String> retVal = new ArrayList<>();
+		switch (Objects.requireNonNullElse(entry.type, "Logic")) {
+		case "Logic" -> retVal.addAll(Arrays.asList("false", "true"));
+		case "Number" -> {
+			for (int i = entry.minNumberValue; i <= entry.maxNumberValue; i++)
+				retVal.add(Integer.toString(i));
+		}
+		case "Enum" -> retVal.addAll(Arrays.asList(entry.enumValues));
+		}
+		return retVal;
+	}
+
+	private String updateValue(String state, String property, String oldValue, String newValue) {
+		if (state.equals(""))
+			return property + "=" + newValue;
+		else
+			return ("," + state + ",").replaceFirst("," + property + "=" + oldValue + ",",
+					"," + property + "=" + newValue + ",").substring(1, state.length() + 1);
+	}
+
+	private String removeValue(String state, String property) {
+		String s = ("," + state + ",").replaceFirst("," + property + "=[a-z0-9_.]*,", ",");
+		LogManager.getLogger("WhereAreWe").warn(s);
+		return s.equals(",") ? "" : s.substring(1, s.length() - 1);
+	}
+
 	private void propertyChanged(JBlockPropertiesListEntry entry, boolean existing) {
-		if (Objects.equals(statesType.getSelectedItem(), "Variants")) {
+		if (!updateRunning && Objects.equals(statesType.getSelectedItem(), "Variants")) {
+			updateRunning = true;
 			new Thread(() -> {
 				try {
 					SwingUtilities.invokeAndWait(() -> {
@@ -368,45 +393,76 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 						LogManager.getLogger("WeAreThere").warn(ex.getMessage(), ex);
 					}
 				}
+				updateRunning = false;
 			}).start();
 		}
 	}
 
-	// TODO: When we have 0 or 1 states, when switching from multipart to variants
+	/*
+	 * 1. Make cache states map
+	 * 2. Iterate over states
+	 * 3. During 2, take entries from that cache
+	 */
+	// TODO
 	private void propertyChanged0(JBlockPropertiesListEntry entry, boolean existing) {
 		Logger LOG = LogManager.getLogger("WeAreHere");
 		String entryName = entry.name.getText();
-		List<String> oldVals = propertiesList.isEmpty() ? Collections.singletonList("") : propertyValues(entry.cached);
-		List<String> newVals = propertyValues(entry.getEntry());
-		String firstState = statesList.get(0).state.getText();
-		Block.ModelEntry firstModel = statesList.get(0).getEntry();
-		int item = 0, done = 0;
-		while (done <= statesList.size()) {
-			LOG.debug("Iterating at " + done + ":" + item);
-			LOG.debug((item > oldVals.size()) + "(old=" + oldVals.size() + ")-(new=" + newVals.size() + ")" + (item > newVals.size()));
-			if (item == 0) {
-				LOG.fatal("Over!..");
-				firstState = statesList.get(done).state.getText();
-				firstModel = statesList.get(done).getEntry();
+		List<String> oldVals = !existing ? List.of("") : propertyValues(entry.getEntry(false));
+		List<String> newVals = propertyValues(entry.getEntry(true));
+		LOG.debug(oldVals);
+		LOG.debug(newVals);
+		if (statesListVariants.isEmpty())
+			addInitialState();
+		Map<String, List<JBlockStatesListEntry>> statesCacheMap = statesListVariants.stream().collect(Collectors.groupingBy(
+				e -> removeValue(e.state.getText(), entryName)));
+		Iterator<List<JBlockStatesListEntry>> stateIterator = statesCacheMap.values().iterator();
+		List<JBlockStatesListEntry> curr = stateIterator.next();
+		String firstState = "";
+		final int limit = statesListVariants.size() / oldVals.size() * newVals.size();
+		LOG.info(statesListVariants.size() + "/" + oldVals.size() + "*" + newVals.size() + "=" + limit);
+		int item = 0, index = 0, done = 0;
+		while (done < limit || stateIterator.hasNext()) {
+			LOG.warn((done < limit) + "=-=" + stateIterator.hasNext());
+			if (item == 0 && done > 0) {
+				LOG.fatal("  Over!..");
+				curr = stateIterator.next();
+				firstState = curr.get(0).state.getText();
 				LOG.fatal(firstState);
 			}
+			LOG.debug("Iterating at " + done + ":" + item);
+			LOG.debug((item > oldVals.size()) + "(old=" + oldVals.size() + ")-(new=" + newVals.size() + ")" + (item > newVals.size()));
+			/*JBlockStatesListEntry stateEntry =
+					done + item < statesList.size() ? statesList.get(done + item) : addStatesEntry(done + item);
+			statesCacheMap.get(existing ? "" : removeValue(stateEntry.state.getText(), entryName));*/
 			if (item >= oldVals.size() && item >= newVals.size()) {
-				LOG.error("i = 0");
-				done += item;
+				LOG.error("  i = 0");
+				done += oldVals.size();
+				if (done >= limit/*!stateIterator.hasNext()*/)
+					break;
 				item = 0;
+				index = 0;
+				/*if (done > 0) {
+					LOG.fatal("  Over!..");
+					curr = stateIterator.next();
+					firstState = curr.get(0).state.getText();
+					LOG.fatal(firstState);
+				}*/
 			} else if (item >= oldVals.size()) {
-				LOG.warn("model[i] = model[0]");
-				addStatesEntry(done + item).setEntry(
-						updatePropertyValue(firstState, entryName, oldVals.get(0), newVals.get(item)), firstModel);
+				LOG.warn("  model[i] = model[0]");
+				String newState = updateValue(firstState, entryName, oldVals.get(0), newVals.get(item));
+				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).setEntry(newState, curr.get(0).getEntry());
 			} else if (item >= newVals.size()) {
-				LOG.warn("state[i] = state[0]");
-				statesList.get(done + item).state.setText(firstState);
+				LOG.warn("  state[i] = state[0]");
+				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).state.setText(firstState);
+				index++;
 			} else {
-				String currState = statesList.get(done + item).state.getText();
-				LOG.info(currState);
-				statesList.get(done + item).state.setText(existing ?
-						updatePropertyValue(currState, entryName, oldVals.get(item), newVals.get(item)) :
-						(currState.equals("") ? "" : currState + ",") + entryName + "=" + newVals.get(item));
+				String currState = curr.get(item).state.getText();
+				String newState = existing ?
+						updateValue(currState, entryName, oldVals.get(item), newVals.get(item)) :
+						(currState.equals("") ? "" : currState + ",") + entryName + "=" + newVals.get(item);
+				LOG.info("  " + currState);
+				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).setEntry(newState, curr.get(index).getEntry());
+				index++;
 			}
 			LOG.debug("And, as we continue...");
 			item++;
@@ -416,15 +472,16 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 	}
 
 	private void propertyRenamed(JBlockPropertiesListEntry entry) {
-		getValidationResult(false).validateIsErrorFree(); // this highlights all the property names errors
-		statesList.forEach(s -> {
-			int indexBuiltin = (int) Arrays.stream(s.state.getText().split(","))
-					.filter(el -> builtinPropertyNames.contains(el.split("=")[0])).count();
-			int indexCustom = propertiesList.stream()
-					.filter(e -> ("," + s.state.getText()).contains("," + e.nameString + "=")).toList().indexOf(entry);
-			s.propertyRenamed(entry.nameString, entry.name.getText(), indexBuiltin + indexCustom);
-		});
-		entry.nameString = entry.name.getText();
+		if (getValidationResult(false).validateIsErrorFree()) {
+			statesListVariants.forEach(e -> {
+				int builtin = (int) Arrays.stream(e.state.getText().split(","))
+						.filter(el -> builtinPropertyNames.contains(el.split("=")[0])).count();
+				e.propertyRenamed(entry.getEntry(false).name, entry.name.getText(), builtin + propertiesList.indexOf(entry));
+			});
+			entry.getEntry(false).name = entry.name.getText();
+		} else {
+			entry.name.setText(entry.getEntry(false).name); // revert renaming to prevent possible conflicts
+		}
 	}
 
 	private void editState(JBlockStatesListEntry entry) {
@@ -435,18 +492,18 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 			if (newState.equals("")) // all properties were unchecked
 				JOptionPane.showMessageDialog(mcreator, L10N.t("elementgui.block.custom_states.add.error_empty"),
 						L10N.t("elementgui.block.custom_states.add.error_empty.title"), JOptionPane.ERROR_MESSAGE);
-			else if (statesList.stream().anyMatch(el -> el != entry && el.state.getText().equals(newState)))
+			else if (statesListMultipart.stream().anyMatch(el -> el != entry && el.state.getText().equals(newState)))
 				JOptionPane.showMessageDialog(mcreator, L10N.t("elementgui.block.custom_states.add.error_duplicate"),
 						L10N.t("elementgui.block.custom_states.add.error_duplicate.title"), JOptionPane.ERROR_MESSAGE);
-			else // valid state was returned
-				(entry != null ? entry : addStatesEntry(statesList.size())).state.setText(newState);
+			else if (!StateEditorDialog.isToken(newState)) // valid state was returned
+				(entry != null ? entry : addStatesEntry(statesListMultipart.size(), true)).state.setText(newState);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
 	}
 
 	private Map<String, PropertyData> buildPropertiesMap() {
-		Map<String, PropertyData> props = new LinkedHashMap<>(builtinProperties);
+		Map<String, PropertyData> props = new LinkedHashMap<>();
 		propertiesList.forEach(e -> {
 			switch (Objects.requireNonNullElse((String) e.type.getSelectedItem(), "Logic")) {
 			case "Logic" -> props.put(e.name.getText(), logicMapper);
@@ -460,7 +517,7 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 
 	public Map<String, Block.PropertyEntry> getProperties() {
 		Map<String, Block.PropertyEntry> retVal = new LinkedHashMap<>();
-		propertiesList.forEach(e -> retVal.put(e.name.getText(), e.getEntry()));
+		propertiesList.forEach(e -> retVal.put(e.name.getText(), e.getEntry(false)));
 		return retVal;
 	}
 
@@ -477,21 +534,39 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		});
 	}
 
-	public Map<String, Block.ModelEntry> getStates() {
+	public String getStatesType() {
+		return (String) Objects.requireNonNullElse(statesType.getSelectedItem(), "Variants");
+	}
+
+	public Map<String, Block.ModelEntry> getStatesVariants() {
 		Map<String, Block.ModelEntry> retVal = new LinkedHashMap<>();
-		statesList.forEach(e -> retVal.put(e.state.getText(), e.getEntry()));
+		statesListVariants.forEach(e -> retVal.put(e.state.getText(), e.getEntry()));
 		return retVal;
 	}
 
-	public void setStates(Map<String, Block.ModelEntry> states) {
-		states.forEach((state, model) -> addStatesEntry(statesList.size()).setEntry(state, model));
+	public Map<String, Block.ModelEntry> getStatesMultipart() {
+		Map<String, Block.ModelEntry> retVal = new LinkedHashMap<>();
+		statesListMultipart.forEach(e -> retVal.put(e.state.getText(), e.getEntry()));
+		return retVal;
+	}
+
+	public void setStatesType(String statesType) {
+		this.statesType.setSelectedItem(statesType);
+	}
+
+	public void setStatesVariants(Map<String, Block.ModelEntry> states) {
+		states.forEach((state, model) -> addStatesEntry(statesListVariants.size(), false).setEntry(state, model));
+	}
+
+	public void setStatesMultipart(Map<String, Block.ModelEntry> states) {
+		states.forEach((state, model) -> addStatesEntry(statesListMultipart.size(), true).setEntry(state, model));
 	}
 
 	public AggregatedValidationResult getValidationResult(boolean includeStates) {
 		AggregatedValidationResult validationResult = new AggregatedValidationResult();
 		propertiesList.forEach(e -> validationResult.addValidationGroup(e.getValidationResult()));
 		if (includeStates)
-			statesList.forEach(e -> validationResult.addValidationGroup(e.getValidationResult()));
+			statesListVariants.forEach(e -> validationResult.addValidationGroup(e.getValidationResult()));
 		return validationResult;
 	}
 }

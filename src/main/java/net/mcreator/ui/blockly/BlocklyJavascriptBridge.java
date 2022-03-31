@@ -157,12 +157,13 @@ public class BlocklyJavascriptBridge {
 
 		if (SwingUtilities.isEventDispatchThread()
 				|| OS.getOS() == OS.MAC) { // on macOS, EventDispatchThread is shared between JFX and SWING
-			DataListEntry selected = DataListSelectorDialog.openSelectorDialog(mcreator, entryProvider, title, message);
+			DataListEntry selected = DataListSelectorDialog.openSelectorDialog(mcreator, entryProvider, false, title,
+					message);
 			if (selected != null)
 				retval = selected.getName() + "," + selected.getReadableName();
 		} else {
 			FutureTask<DataListEntry> query = new FutureTask<>(
-					() -> DataListSelectorDialog.openSelectorDialog(mcreator, entryProvider, title, message));
+					() -> DataListSelectorDialog.openSelectorDialog(mcreator, entryProvider, false, title, message));
 			try {
 				SwingUtilities.invokeLater(query);
 				DataListEntry selected = query.get();
