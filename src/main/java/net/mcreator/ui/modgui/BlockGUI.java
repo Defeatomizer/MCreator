@@ -333,6 +333,8 @@ public class BlockGUI extends ModElementGUI<Block> {
 
 		blockStates = new JBlockPropertiesStatesList(mcreator, this);
 		blockStates.setPreferredSize(getPreferredSize());
+		if (!isEditingMode())
+			blockStates.addInitialState();
 
 		blockBase.addActionListener(e -> {
 			renderType.setEnabled(true);

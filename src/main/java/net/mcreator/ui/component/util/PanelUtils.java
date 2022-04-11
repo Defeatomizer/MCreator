@@ -18,6 +18,8 @@
 
 package net.mcreator.ui.component.util;
 
+import net.mcreator.ui.component.JEmptyBox;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -43,12 +45,15 @@ public class PanelUtils {
 		return skup;
 	}
 
-	public static JPanel stack(Component... c1) {
+	public static JPanel stack(int gap, Component... c1) {
 		JPanel skup = new JPanel();
 		skup.setLayout(new BoxLayout(skup, BoxLayout.Y_AXIS));
 		skup.setOpaque(false);
-		for (Component c : c1)
+		for (Component c : c1) {
+			skup.add(new JEmptyBox(0, gap));
 			skup.add(c);
+		}
+		skup.remove(0);
 		return skup;
 	}
 

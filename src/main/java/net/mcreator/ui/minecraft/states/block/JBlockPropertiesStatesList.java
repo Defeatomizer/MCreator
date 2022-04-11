@@ -36,18 +36,14 @@ import net.mcreator.ui.validation.AggregatedValidationResult;
 import net.mcreator.ui.validation.validators.PropertyNameValidator;
 import net.mcreator.ui.validation.validators.RegistryNameValidator;
 import net.mcreator.util.ListUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.mcreator.util.Tuple;
 
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ContainerAdapter;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
@@ -55,20 +51,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class JBlockPropertiesStatesList extends JEntriesList {
 
 	private final List<JBlockPropertiesListEntry> propertiesList = new ArrayList<>();
-	private final List<JBlockStatesListEntry> statesListVariants = new ArrayList<>(); //TODO separate lists for both state types
+	private final List<JBlockStatesListEntry> statesListVariants = new ArrayList<>();
 	private final List<JBlockStatesListEntry> statesListMultipart = new ArrayList<>();
 	private final AtomicInteger propertyId = new AtomicInteger(0);
 
-	private final ButtonGroup variantsGroup = new ButtonGroup();
-	private final ButtonGroup multipartGroup = new ButtonGroup();
 	private final Border selected = BorderFactory.createLineBorder((Color) UIManager.get("MCreatorLAF.MAIN_TINT"), 2);
 	private final Border unselected = BorderFactory.createEmptyBorder(2, 2, 2, 2);
-	private JBlockStatesListEntry lastSelected;
-	private final ItemListener defaultStateUpdater;
+	private final ButtonGroup variantsGroup = new ButtonGroup();
+	private final ButtonGroup multipartGroup = new ButtonGroup();
+	private JBlockStatesListEntry lastSelectedVariants;
+	private JBlockStatesListEntry lastSelectedMultipart;
+	private final ItemListener defaultVariantsStateUpdater;
+	private final ItemListener defaultMultipartStateUpdater;
 	private boolean updateRunning = false;
 
 	private final JPanel propertyEntries = new JPanel(new GridLayout(0, 1, 5, 5));
@@ -82,8 +81,7 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 	private final List<String> builtinPropertyNames;
 	//private final Map<String, PropertyData> builtinProperties = new LinkedHashMap<>();
 
-	private final JPopupMenu chooser = new JPopupMenu();
-	private final PropertyData logicMapper = new PropertyData(Boolean.class, null, null, null);
+	private final PropertyData logic = new PropertyData(Boolean.class, null, null, null);
 	private final BiFunction<Integer, Integer, PropertyData> numMapper = (min, max) -> new PropertyData(Integer.class,
 			min, max, null);
 	private final Function<String[], PropertyData> enumMapper = arr -> new PropertyData(String.class, null, null, arr);
@@ -114,13 +112,30 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		stateEntriesMultipart.setOpaque(false);
 
 		propertyEntries.addContainerListener(new ContainerAdapter() {
-			@Override public void componentRemoved(ContainerEvent e) {
-				trimStates();
+			@Override public void componentRemoved(ContainerEvent event) {
+				List<JBlockStatesListEntry> cache = ListUtils.merge(statesListVariants, statesListMultipart);
+				if (propertiesList.size() > 0) {
+					Map<String, PropertyData> propertiesMap = buildPropertiesMap();
+					Set<String> filter = new HashSet<>();
+					cache.forEach(e -> {
+						e.state.setText(Arrays.stream(e.state.getText().split(","))
+								.filter(el -> propertiesMap.containsKey(el.split("=")[0]))
+								.collect(Collectors.joining(",")));
+						if (e.state.getText() == null || (e.state.getText().equals("") && cache.size() > 0)
+								|| !filter.add(e.state.getText()))
+							e.removeEntry(stateEntriesVariants, statesListVariants);
+					});
+				} else {
+					cache.forEach(e -> e.removeEntry(stateEntriesVariants, statesListVariants));
+					addInitialState();
+				}
 			}
 		});
 
 		JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		buttons.setOpaque(false);
+
+		JPopupMenu chooser = new JPopupMenu();
 
 		JMenuItem logic = new JMenuItem("Logic");
 		logic.addActionListener(e -> {
@@ -157,21 +172,34 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		addState.setEnabled(false);
 		buttons.add(addState);
 
-		defaultStateUpdater = e -> {
-			if (lastSelected != null) {
-				lastSelected.setBorder(unselected);
-				lastSelected.window.setEnabled(true);
+		defaultVariantsStateUpdater = e -> {
+			if (lastSelectedVariants != null) {
+				lastSelectedVariants.setBorder(unselected);
+				lastSelectedVariants.window.setEnabled(true);
 			}
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				try {
-					lastSelected = (JBlockStatesListEntry) ((JToggleButton) e.getItemSelectable()).getParent();
-					lastSelected.setBorder(selected);
-					lastSelected.window.setEnabled(false);
+					lastSelectedVariants = (JBlockStatesListEntry) ((JToggleButton) e.getItemSelectable()).getParent();
+					lastSelectedVariants.setBorder(selected);
+					lastSelectedVariants.window.setEnabled(false);
 				} catch (ClassCastException ignored) {
 				}
 			}
 		};
-		addInitialState(); // default state type is "variants", so we initialize default state entry
+		defaultMultipartStateUpdater = e -> {
+			if (lastSelectedMultipart != null) {
+				lastSelectedMultipart.setBorder(unselected);
+				lastSelectedMultipart.window.setEnabled(true);
+			}
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				try {
+					lastSelectedMultipart = (JBlockStatesListEntry) ((JToggleButton) e.getItemSelectable()).getParent();
+					lastSelectedMultipart.setBorder(selected);
+					lastSelectedMultipart.window.setEnabled(false);
+				} catch (ClassCastException ignored) {
+				}
+			}
+		};
 
 		JPanel topbar = new JPanel(new FlowLayout());
 		topbar.setOpaque(false);
@@ -309,68 +337,80 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		}
 	}
 
-	private JBlockStatesListEntry addStatesEntry(int stateId, boolean multipart) {
+	private JBlockStatesListEntry addStatesEntry(boolean multipart) {
 		JBlockStatesListEntry se = multipart ?
-				new JBlockStatesListEntry(mcreator, gui, stateEntriesMultipart, statesListMultipart, stateId, true) :
-				new JBlockStatesListEntry(mcreator, gui, stateEntriesVariants, statesListVariants, stateId, false);
+				new JBlockStatesListEntry(mcreator, gui, stateEntriesMultipart, statesListMultipart, true) :
+				new JBlockStatesListEntry(mcreator, gui, stateEntriesVariants, statesListVariants, false);
 
 		se.setBorder(unselected);
 		se.edit.addActionListener(e -> editState(se));
-		se.isDefault.addItemListener(defaultStateUpdater);
+		se.isDefault.addItemListener(multipart ? defaultMultipartStateUpdater : defaultVariantsStateUpdater);
 		(Objects.equals(statesType.getSelectedItem(), "Variants") ? variantsGroup : multipartGroup).add(se.isDefault);
+		if (multipart)
+			se.isDefault.addActionListener(new ActionListener() {
+				boolean status = false; // TODO
+
+				@Override public void actionPerformed(ActionEvent e) {
+					if (status)
+						multipartGroup.clearSelection();
+					status = se.isDefault.isSelected();
+				}
+			});
 
 		registerEntryUI(se);
 		return se;
 	}
 
-	private void addInitialState() {
-		JToggleButton initial = addStatesEntry(0, false).isDefault;
+	public void addInitialState() {
+		markStateAsDefault(addStatesEntry(false));
+	}
+
+	private void markStateAsDefault(JBlockStatesListEntry entry) {
+		JToggleButton initial = entry.isDefault;
 		initial.setSelected(true);
-		defaultStateUpdater.itemStateChanged(
+		defaultVariantsStateUpdater.itemStateChanged(
 				new ItemEvent(initial, ItemEvent.ITEM_STATE_CHANGED, initial, ItemEvent.SELECTED));
 	}
 
-	private void trimStates() {
-		if (propertiesList.size() > 0) {
-			Map<String, PropertyData> propertiesMap = buildPropertiesMap();
-			statesListVariants.forEach(s -> s.state.setText(Arrays.stream(s.state.getText().split(","))
-					.filter(el -> propertiesMap.containsKey(el.split("=")[0])).collect(Collectors.joining(","))));
-			Set<String> duplicates = new HashSet<>(); // when states are trimmed, we remove possible duplicates
-			statesListVariants.stream().toList().forEach(e -> {
-				if (e.state.getText() == null || e.state.getText().equals("") || !duplicates.add(e.state.getText()))
-					e.removeEntry(stateEntriesVariants, statesListVariants);
-			});
-		} else if (Objects.equals(statesType.getSelectedItem(), "Variants")) {
-			statesListVariants.forEach(e -> e.removeEntry(stateEntriesVariants, statesListVariants));
-			addInitialState();
+	private static List<String> propertyValues(Block.PropertyEntry entry) {
+		return switch (Objects.requireNonNullElse(entry.type, "Logic")) {
+			case "Logic" -> List.of("false", "true");
+			case "Number" -> IntStream.rangeClosed(entry.minNumberValue, entry.maxNumberValue)
+					.mapToObj(Integer::toString).toList();
+			case "Enum" -> List.of(entry.enumValues);
+			default -> List.of();
+		};
+	}
+
+	private static String getValue(String state, String property) {
+		String match = "," + property + "=";
+		if (!("," + state).contains(match)) {
+			return "";
+		} else {
+			String retVal = ("," + state).substring(("," + state).indexOf(match) + match.length());
+			return !retVal.contains(",") ? retVal : retVal.substring(0, retVal.indexOf(","));
 		}
 	}
 
-	private List<String> propertyValues(Block.PropertyEntry entry) {
-		List<String> retVal = new ArrayList<>();
-		switch (Objects.requireNonNullElse(entry.type, "Logic")) {
-		case "Logic" -> retVal.addAll(Arrays.asList("false", "true"));
-		case "Number" -> {
-			for (int i = entry.minNumberValue; i <= entry.maxNumberValue; i++)
-				retVal.add(Integer.toString(i));
-		}
-		case "Enum" -> retVal.addAll(Arrays.asList(entry.enumValues));
-		}
-		return retVal;
-	}
-
-	private String updateValue(String state, String property, String oldValue, String newValue) {
-		if (state.equals(""))
+	private static String updateValue(String state, String property, String oldValue, String newValue) {
+		if (state.equals("")) {
 			return property + "=" + newValue;
-		else
-			return ("," + state + ",").replaceFirst("," + property + "=" + oldValue + ",",
-					"," + property + "=" + newValue + ",").substring(1, state.length() + 1);
+		} else if (!("," + state).contains("," + property + "=")) {
+			return state + "," + property + "=" + newValue;
+		} else {
+			String retVal = ("," + state + ",").replaceFirst("," + property + "=" + oldValue + ",",
+					"," + property + "=" + newValue + ",");
+			return retVal.substring(1, retVal.length() - 1);
+		}
 	}
 
-	private String removeValue(String state, String property) {
-		String s = ("," + state + ",").replaceFirst("," + property + "=[a-z0-9_.]*,", ",");
-		LogManager.getLogger("WhereAreWe").warn(s);
-		return s.equals(",") ? "" : s.substring(1, s.length() - 1);
+	private static String removeValue(String state, String property) {
+		String retVal = ("," + state + ",").replaceFirst("," + property + "=[a-z0-9-_]*,", ",");
+		return retVal.equals(",") ? "" : retVal.substring(1, retVal.length() - 1);
+	}
+
+	private static List<Tuple<String, Block.ModelEntry>> mapStatesToEntries(List<JBlockStatesListEntry> list) {
+		return list.stream().map(e -> new Tuple<>(e.state.getText(), e.getEntry())).toList();
 	}
 
 	private void propertyChanged(JBlockPropertiesListEntry entry, boolean existing) {
@@ -381,107 +421,107 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 					SwingUtilities.invokeAndWait(() -> {
 						try {
 							propertyChanged0(entry, existing); //TODO: Maybe it's better to have single unified method?
-						} catch (Exception ex) {
-							LogManager.getLogger("WeAreThere").error(ex.getMessage(), ex);
+						} catch (Exception ignored) {
 						}
 					});
-				} catch (InterruptedException | InvocationTargetException e) {
-					LogManager.getLogger("WeAreThere").fatal(e.getMessage(), e);
-					try {
-						propertyChanged0(entry, existing);
-					} catch (Exception ex) {
-						LogManager.getLogger("WeAreThere").warn(ex.getMessage(), ex);
-					}
+				} catch (InterruptedException | InvocationTargetException ignored) {
 				}
 				updateRunning = false;
 			}).start();
 		}
 	}
 
-	/*
-	 * 1. Make cache states map
-	 * 2. Iterate over states
-	 * 3. During 2, take entries from that cache
-	 */
-	// TODO
 	private void propertyChanged0(JBlockPropertiesListEntry entry, boolean existing) {
-		Logger LOG = LogManager.getLogger("WeAreHere");
 		String entryName = entry.name.getText();
 		List<String> oldVals = !existing ? List.of("") : propertyValues(entry.getEntry(false));
 		List<String> newVals = propertyValues(entry.getEntry(true));
-		LOG.debug(oldVals);
-		LOG.debug(newVals);
 		if (statesListVariants.isEmpty())
 			addInitialState();
-		Map<String, List<JBlockStatesListEntry>> statesCacheMap = statesListVariants.stream().collect(Collectors.groupingBy(
-				e -> removeValue(e.state.getText(), entryName)));
-		Iterator<List<JBlockStatesListEntry>> stateIterator = statesCacheMap.values().iterator();
-		List<JBlockStatesListEntry> curr = stateIterator.next();
-		String firstState = "";
-		final int limit = statesListVariants.size() / oldVals.size() * newVals.size();
-		LOG.info(statesListVariants.size() + "/" + oldVals.size() + "*" + newVals.size() + "=" + limit);
-		int item = 0, index = 0, done = 0;
-		while (done < limit || stateIterator.hasNext()) {
-			LOG.warn((done < limit) + "=-=" + stateIterator.hasNext());
-			if (item == 0 && done > 0) {
-				LOG.fatal("  Over!..");
-				curr = stateIterator.next();
-				firstState = curr.get(0).state.getText();
-				LOG.fatal(firstState);
+
+		String defaultState = lastSelectedVariants == null ? null : lastSelectedVariants.state.getText();
+		boolean defaultFound = false;
+
+		if (!existing) {
+			List<Tuple<String, Block.ModelEntry>> cache = mapStatesToEntries(statesListVariants);
+			for (int i = 0; i < cache.size(); i++) {
+				String currState = cache.get(i).x();
+				for (int j = 0; j < newVals.size(); j++) {
+					int currIndex = i * newVals.size() + j;
+					String newState = updateValue(currState, entryName, "", newVals.get(j));
+					JBlockStatesListEntry se = currIndex < statesListVariants.size() ?
+							statesListVariants.get(currIndex) :
+							addStatesEntry(false);
+					se.setEntry(newState, cache.get(i).y());
+					if (!defaultFound && j == 0 && Objects.equals(defaultState, currState)) {
+						markStateAsDefault(se);
+						defaultFound = true;
+					}
+				}
 			}
-			LOG.debug("Iterating at " + done + ":" + item);
-			LOG.debug((item > oldVals.size()) + "(old=" + oldVals.size() + ")-(new=" + newVals.size() + ")" + (item > newVals.size()));
-			/*JBlockStatesListEntry stateEntry =
-					done + item < statesList.size() ? statesList.get(done + item) : addStatesEntry(done + item);
-			statesCacheMap.get(existing ? "" : removeValue(stateEntry.state.getText(), entryName));*/
-			if (item >= oldVals.size() && item >= newVals.size()) {
-				LOG.error("  i = 0");
-				done += oldVals.size();
-				if (done >= limit/*!stateIterator.hasNext()*/)
-					break;
-				item = 0;
-				index = 0;
-				/*if (done > 0) {
-					LOG.fatal("  Over!..");
-					curr = stateIterator.next();
-					firstState = curr.get(0).state.getText();
-					LOG.fatal(firstState);
-				}*/
-			} else if (item >= oldVals.size()) {
-				LOG.warn("  model[i] = model[0]");
-				String newState = updateValue(firstState, entryName, oldVals.get(0), newVals.get(item));
-				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).setEntry(newState, curr.get(0).getEntry());
-			} else if (item >= newVals.size()) {
-				LOG.warn("  state[i] = state[0]");
-				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).state.setText(firstState);
-				index++;
-			} else {
-				String currState = curr.get(item).state.getText();
-				String newState = existing ?
-						updateValue(currState, entryName, oldVals.get(item), newVals.get(item)) :
-						(currState.equals("") ? "" : currState + ",") + entryName + "=" + newVals.get(item);
-				LOG.info("  " + currState);
-				addStatesEntry(Math.min(done + item, statesListVariants.size()), false).setEntry(newState, curr.get(index).getEntry());
-				index++;
+		} else {
+			JPanel hidden = new JPanel();
+			List<JBlockStatesListEntry> statesIterated = ListUtils.splitGroupsAndIterate(statesListVariants, oldVals.size(),
+					e -> removeValue(e.state.getText(), entryName), e -> {
+						Function<Integer, JBlockStatesListEntry> stateGetter = i -> i < e.size() ?
+								e.get(i) :
+								new JBlockStatesListEntry(mcreator, gui, hidden, e, false);
+						String firstState = e.get(0).state.getText();
+						Block.ModelEntry firstModel = e.get(0).getEntry();
+						for (int i = 0; i < newVals.size(); i++) {
+							if (i >= oldVals.size()) {
+								String newState = updateValue(firstState, entryName, oldVals.get(0), newVals.get(i));
+								stateGetter.apply(i).setEntry(newState, firstModel);
+							} else {
+								String newState = updateValue(e.get(i).state.getText(), entryName, oldVals.get(i),
+										newVals.get(i));
+								//Block.ModelEntry model = e.get(i).getEntry();
+								stateGetter.apply(i).state.setText/*Entry*/(newState/*, model*/);
+							}
+						}
+						if (e.size() >= newVals.size())
+							e.subList(newVals.size(), e.size()).stream().toList().forEach(e::remove);
+					});
+			List<Tuple<String, Block.ModelEntry>> newStates = mapStatesToEntries(statesIterated);
+			if (statesListVariants.size() >= newStates.size()) {
+				statesListVariants.subList(newStates.size(), statesListVariants.size()).stream().toList()
+						.forEach(e -> e.removeEntry(stateEntriesVariants, statesListVariants));
 			}
-			LOG.debug("And, as we continue...");
-			item++;
+			for (int i = 0; i < newStates.size(); i++) {
+				Tuple<String, Block.ModelEntry> currState = newStates.get(i);
+				JBlockStatesListEntry se =
+						i < statesListVariants.size() ? statesListVariants.get(i) : addStatesEntry(false);
+				se.setEntry(currState.x(), currState.y());
+				String propVal = getValue(defaultState, entryName);
+				if (!defaultFound && Objects.equals(defaultState, currState.x())) {
+					markStateAsDefault(se);
+					defaultFound = true;
+				} else if (!defaultFound && defaultState != null && !newVals.contains(propVal) && Objects.equals(
+						currState.x(), updateValue(defaultState, entryName, propVal, newVals.get(0)))) {
+					markStateAsDefault(se);
+					defaultFound = true;
+				}
+			}
+			if (!defaultFound)
+				markStateAsDefault(statesListVariants.get(0));
 		}
-		LOG.debug("Nicely done!");
-		trimStates();
 	}
 
 	private void propertyRenamed(JBlockPropertiesListEntry entry) {
-		if (getValidationResult(false).validateIsErrorFree()) {
-			statesListVariants.forEach(e -> {
-				int builtin = (int) Arrays.stream(e.state.getText().split(","))
-						.filter(el -> builtinPropertyNames.contains(el.split("=")[0])).count();
-				e.propertyRenamed(entry.getEntry(false).name, entry.name.getText(), builtin + propertiesList.indexOf(entry));
-			});
-			entry.getEntry(false).name = entry.name.getText();
-		} else {
-			entry.name.setText(entry.getEntry(false).name); // revert renaming to prevent possible conflicts
-		}
+		if (entry.renaming)
+			return;
+
+		entry.renaming = true;
+		new Thread(() -> {
+			if (getValidationResult(false).validateIsErrorFree()) {
+				ListUtils.merge(statesListVariants, statesListMultipart).forEach(e -> e.state.setText(
+						("," + e.state.getText()).replaceFirst("," + entry.getEntry(false).name + "=",
+								"," + entry.name.getText() + "=").substring(1)));
+				entry.getEntry(false).name = entry.name.getText();
+			} else { // revert renaming to prevent possible conflicts
+				SwingUtilities.invokeLater(() -> entry.name.setText(entry.getEntry(false).name));
+			}
+			entry.renaming = false;
+		}).start();
 	}
 
 	private void editState(JBlockStatesListEntry entry) {
@@ -489,14 +529,14 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 				&& getValidationResult(false).validateIsErrorFree()) {
 			String newState = StateEditorDialog.open(mcreator, entry != null ? entry.state.getText() : "!new",
 					buildPropertiesMap(), "block/custom_state").replace("!new", "").replace("!esc", "");
-			if (newState.equals("")) // all properties were unchecked
+			if (/*newState.equals("")) // all properties were unchecked
 				JOptionPane.showMessageDialog(mcreator, L10N.t("elementgui.block.custom_states.add.error_empty"),
 						L10N.t("elementgui.block.custom_states.add.error_empty.title"), JOptionPane.ERROR_MESSAGE);
-			else if (statesListMultipart.stream().anyMatch(el -> el != entry && el.state.getText().equals(newState)))
+			else if (*/statesListMultipart.stream().anyMatch(el -> el != entry && el.state.getText().equals(newState)))
 				JOptionPane.showMessageDialog(mcreator, L10N.t("elementgui.block.custom_states.add.error_duplicate"),
 						L10N.t("elementgui.block.custom_states.add.error_duplicate.title"), JOptionPane.ERROR_MESSAGE);
 			else if (!StateEditorDialog.isToken(newState)) // valid state was returned
-				(entry != null ? entry : addStatesEntry(statesListMultipart.size(), true)).state.setText(newState);
+				(entry != null ? entry : addStatesEntry(true)).state.setText(newState);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
@@ -506,7 +546,7 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 		Map<String, PropertyData> props = new LinkedHashMap<>();
 		propertiesList.forEach(e -> {
 			switch (Objects.requireNonNullElse((String) e.type.getSelectedItem(), "Logic")) {
-			case "Logic" -> props.put(e.name.getText(), logicMapper);
+			case "Logic" -> props.put(e.name.getText(), logic);
 			case "Number" -> props.put(e.name.getText(),
 					numMapper.apply((int) e.minNumberValue.getValue(), (int) e.maxNumberValue.getValue()));
 			case "Enum" -> props.put(e.name.getText(), enumMapper.apply(e.enumValues.getText().split(",")));
@@ -535,7 +575,7 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 	}
 
 	public String getStatesType() {
-		return (String) Objects.requireNonNullElse(statesType.getSelectedItem(), "Variants");
+		return Objects.requireNonNullElse((String) statesType.getSelectedItem(), "Variants");
 	}
 
 	public Map<String, Block.ModelEntry> getStatesVariants() {
@@ -555,11 +595,11 @@ public class JBlockPropertiesStatesList extends JEntriesList {
 	}
 
 	public void setStatesVariants(Map<String, Block.ModelEntry> states) {
-		states.forEach((state, model) -> addStatesEntry(statesListVariants.size(), false).setEntry(state, model));
+		states.forEach((state, model) -> addStatesEntry(false).setEntry(state, model));
 	}
 
 	public void setStatesMultipart(Map<String, Block.ModelEntry> states) {
-		states.forEach((state, model) -> addStatesEntry(statesListMultipart.size(), true).setEntry(state, model));
+		states.forEach((state, model) -> addStatesEntry(true).setEntry(state, model));
 	}
 
 	public AggregatedValidationResult getValidationResult(boolean includeStates) {

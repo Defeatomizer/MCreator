@@ -54,14 +54,14 @@ public class JBlockStatesListEntry extends JPanel {
 
 	private final MCreator mcreator;
 	private final JComponent container;
-	final JButton remove = new JButton(UIRES.get("16px.clear"));
+	private final JButton remove = new JButton(UIRES.get("16px.clear"));
 	final JButton window = L10N.button("elementgui.block.custom_state.model_settings");
 
 	final JLabel state = new JLabel();
 	final JButton edit = new JButton(UIRES.get("16px.edit.gif"));
-	final JComboBox<String> operator = new JComboBox<>(new String[] { "AND", "OR" });
 	final JToggleButton isDefault;
-	boolean multipart;
+	private final JComboBox<String> operator = new JComboBox<>(new String[] { "AND", "OR" });
+	private final boolean multipart;
 
 	private final TextureHolder texture;
 	private final TextureHolder textureTop;
@@ -79,7 +79,7 @@ public class JBlockStatesListEntry extends JPanel {
 	private final JCheckBox bbOverride = L10N.checkbox("elementgui.block.custom_state.override_bounding_boxes");
 
 	public JBlockStatesListEntry(MCreator mcreator, IHelpContext gui, JPanel parent,
-			List<JBlockStatesListEntry> entryList, int index, boolean multipart) {
+			List<JBlockStatesListEntry> entryList, boolean multipart) {
 		super(new FlowLayout(FlowLayout.LEFT));
 		this.mcreator = mcreator;
 		this.multipart = multipart;
@@ -112,11 +112,11 @@ public class JBlockStatesListEntry extends JPanel {
 		statePane.setOpaque(true);
 		statePane.setBackground((Color) UIManager.get("MCreatorLAF.LIGHT_ACCENT"));
 
-		isDefault = multipart ? new JCheckBox() : new JRadioButton();
-		add(isDefault);
+		add(isDefault = multipart ? new JCheckBox() : new JRadioButton());
 		add(stateLabel);
 		add(statePane);
-		add(operator);
+		if (multipart)
+			add(operator);
 
 		texture = new TextureHolder(new BlockItemTextureSelector(mcreator, BlockItemTextureSelector.TextureType.BLOCK));
 		texture.setValidator(new TileHolderValidator(texture));
@@ -172,19 +172,13 @@ public class JBlockStatesListEntry extends JPanel {
 		model.addActionListener(e -> modelChanged());
 		reloadDataLists(); // we make sure that combo box can be properly shown
 
-		JPanel visual = new JPanel();
-		visual.setOpaque(false);
 		JPanel modelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		modelPanel.setOpaque(false);
-
 		modelPanel.add(HelpUtils.stackHelpTextAndComponent(gui.withEntry("block/state_model"),
 				L10N.t("elementgui.block.custom_state.model"), model, 3));
 		modelPanel.add(HelpUtils.stackHelpTextAndComponent(gui.withEntry("block/state_rotation"),
 				L10N.t("elementgui.block.custom_state.rotation"), PanelUtils.join(xRot, yRot), 3));
 		modelPanel.add(HelpUtils.wrapWithHelpButton(gui.withEntry("block/state_lock_textures"), uvLock));
-
-		visual.add("North", textures);
-		visual.add("South", modelPanel);
 
 		bbList = new JBoundingBoxList(mcreator, gui);
 		bbOverride.setSelected(true);
@@ -195,25 +189,27 @@ public class JBlockStatesListEntry extends JPanel {
 		bbPane.add("Center", bbList);
 
 		JTabbedPane params = new JTabbedPane();
-		params.addTab(L10N.t("elementgui.block.custom_state.model_textures"), visual);
+		params.addTab(L10N.t("elementgui.block.custom_state.model_textures"),
+				PanelUtils.centerAndSouthElement(PanelUtils.centerInPanel(textures), modelPanel));
 		params.addTab(L10N.t("elementgui.block.custom_state.bounding_boxes"), bbPane);
 
 		window.addActionListener(e -> {
 			MCreatorDialog dialog = new MCreatorDialog(mcreator,
 					L10N.t("elementgui.block.custom_state.model_settings"));
-			dialog.getContentPane().add(params);
+			dialog.getContentPane().add(params); // TODO: Add custom "Close" button
 			dialog.setSize(800, 550);
 			dialog.setLocationRelativeTo(mcreator);
 			dialog.setVisible(true);
 		});
 		add(window);
 
-		parent.add(container, index);
-		entryList.add(index, this);
+		parent.add(container);
+		entryList.add(this);
 
 		remove.setText(L10N.t("elementgui.block.custom_state.remove"));
 		remove.addActionListener(e -> removeEntry(parent, entryList));
-		add(remove);
+		if (multipart)
+			add(remove);
 
 		parent.revalidate();
 		parent.repaint();
@@ -274,14 +270,6 @@ public class JBlockStatesListEntry extends JPanel {
 		ComboBoxUtil.updateComboBoxContents(model, ListUtils.merge(Arrays.asList(BlockGUI.builtInBlockModels()),
 				Model.getModelsWithTextureMaps(mcreator.getWorkspace()).stream()
 						.filter(el -> el.getType() == Model.Type.JSON || el.getType() == Model.Type.OBJ).toList()));
-	}
-
-	void propertyRenamed(String property, String newName, int index) {
-		String[] stateParts = state.getText().split(",");
-		if (index >= stateParts.length || !stateParts[index].startsWith(property + "="))
-			index = Arrays.stream(stateParts).map(e -> e.split("=")[0]).toList().indexOf(property);
-		stateParts[index] = stateParts[index].replace(property + "=", newName + "=");
-		state.setText(String.join(",", stateParts));
 	}
 
 	public Block.ModelEntry getEntry() {

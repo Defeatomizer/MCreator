@@ -42,12 +42,13 @@ public class JBlockPropertiesListEntry extends JPanel {
 	private final JComponent container;
 
 	final VTextField name = new VTextField(20);
+	boolean renaming = false; // TODO: Resolve cases of names with length 1
 	private final Block.PropertyEntry cached = new Block.PropertyEntry();
 	private boolean builtin = false;
 
 	final JComboBox<String> type = new JComboBox<>(new String[] { "Logic", "Number", "Enum" });
-	final JComboBox<String> defaultLogicValue = new JComboBox<>(new String[] { "false", "true" });
-	final JSpinner defaultNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+	private final JComboBox<String> defaultLogicValue = new JComboBox<>(new String[] { "false", "true" });
+	private final JSpinner defaultNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
 	final JSpinner minNumberValue = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE - 1, 1));
 	final JSpinner maxNumberValue = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 1));
 	final VTextField enumValues = new VTextField(20);
@@ -63,12 +64,12 @@ public class JBlockPropertiesListEntry extends JPanel {
 		CardLayout layout = new CardLayout();
 		JPanel tps = new JPanel(layout);
 		tps.add("Logic", PanelUtils.centerInPanel(defaultLogicValue));
-		tps.add("Number", PanelUtils.stack(defaultNumberValue, minNumberValue, maxNumberValue));
+		tps.add("Number", PanelUtils.stack(3, defaultNumberValue, minNumberValue, maxNumberValue));
 		tps.add("Enum", PanelUtils.centerInPanel(enumValues));
 		type.addActionListener(e -> layout.show(tps, (String) type.getSelectedItem()));
 
 		final String title = "Enum value strings";
-		enumValues.setText("value");
+		enumValues.setText("none,default");
 		enumValues.setValidator(new RegistryNameValidator(enumValues, title) {
 			@Override public ValidationResult validate() {
 				if (Objects.equals(type.getSelectedItem(), "Enum")) {

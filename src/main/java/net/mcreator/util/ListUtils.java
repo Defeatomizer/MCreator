@@ -19,6 +19,10 @@
 package net.mcreator.util;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class ListUtils {
 
@@ -56,6 +60,47 @@ public class ListUtils {
 			items.clear();
 			items.addAll(copy);
 		}
+	}
+
+	public static <T> List<T> splitGroupsAndIterate(List<T> list, final int groupSize, Function<T, Object> groupBy,
+			Consumer<List<T>> action) {
+		List<T> retVal = new ArrayList<>();
+		if (list.isEmpty())
+			return retVal;
+
+		BiPredicate<Set<Object>, List<Object>> checksum = (ids, idGroup) -> ids.stream()
+				.allMatch(e -> !idGroup.contains(e) || idGroup.stream().filter(e::equals).count() == groupSize);
+		Map<Object, List<T>> groups = new LinkedHashMap<>();
+		Set<List<Object>> idMap = new LinkedHashSet<>();
+		List<Object> idRef = new ArrayList<>();
+		for (T t : list) {
+			Object id = groupBy.apply(t);
+			if (!groups.containsKey(id))
+				groups.put(id, new ArrayList<>());
+			groups.get(id).add(t);
+			if (idMap.isEmpty() || checksum.test(groups.keySet(), idRef)) {
+				idMap.add(idRef = new ArrayList<>());
+			}
+			idRef.add(id);
+		}
+
+		AtomicInteger newSize = new AtomicInteger(-1);
+		groups.values().forEach(e -> {
+			action.accept(e);
+			newSize.compareAndSet(-1, e.size());
+		});
+
+		if (groups.isEmpty() || groups.values().stream().anyMatch(Collection::isEmpty))
+			return retVal;
+
+		for (List<Object> aGroup : idMap) {
+			for (int j = 0; j < newSize.get(); j++) {
+				for (Object id : aGroup.subList(0, aGroup.size() / groupSize))
+					retVal.add(groups.get(id).remove(0));
+			}
+		}
+
+		return retVal;
 	}
 
 	public static <T> T getRandomItem(T[] list) {
