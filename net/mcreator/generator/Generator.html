@@ -205,6 +205,13 @@ implements <a href="IGenerator.html" title="interface in net.mcreator.generator"
  boolean&nbsp;performFSTasks,
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html" title="class or interface in java.util.concurrent.atomic" class="external-link">AtomicInteger</a>&nbsp;templateID)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="GeneratorTemplatesList.html" title="class in net.mcreator.generator">GeneratorTemplatesList</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getModElementListTemplates(net.mcreator.workspace.elements.ModElement)" class="member-name-link">getModElementListTemplates</a><wbr>(<a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a>&nbsp;element)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="GeneratorTemplatesList.html" title="class in net.mcreator.generator">GeneratorTemplatesList</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getModElementListTemplates(net.mcreator.workspace.elements.ModElement,net.mcreator.element.GeneratableElement)" class="member-name-link">getModElementListTemplates</a><wbr>(<a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a>&nbsp;element,
+ <a href="../element/GeneratableElement.html" title="class in net.mcreator.element">GeneratableElement</a>&nbsp;generatableElement)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getModElementThisFileBelongsTo(java.io.File)" class="member-name-link">getModElementThisFileBelongsTo</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
@@ -233,11 +240,8 @@ implements <a href="IGenerator.html" title="interface in net.mcreator.generator"
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runResourceSetupTasks()" class="member-name-link">runResourceSetupTasks</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#runSetupTasks(java.util.List)" class="member-name-link">runSetupTasks</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;?&gt;&nbsp;setupTaks)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setGradleCache(net.mcreator.generator.GeneratorGradleCache)" class="member-name-link">setGradleCache</a><wbr>(<a href="GeneratorGradleCache.html" title="class in net.mcreator.generator">GeneratorGradleCache</a>&nbsp;generatorGradleCache)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setGradleCache(net.mcreator.generator.GeneratorGradleCache)" class="member-name-link">setGradleCache</a><wbr>(<a href="GeneratorGradleCache.html" title="class in net.mcreator.generator">GeneratorGradleCache</a>&nbsp;generatorGradleCache)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -483,6 +487,19 @@ implements <a href="IGenerator.html" title="interface in net.mcreator.generator"
 </section>
 </li>
 <li>
+<section class="detail" id="getModElementListTemplates(net.mcreator.workspace.elements.ModElement)">
+<h3>getModElementListTemplates</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="GeneratorTemplatesList.html" title="class in net.mcreator.generator">GeneratorTemplatesList</a>&gt;</span>&nbsp;<span class="element-name">getModElementListTemplates</span><wbr><span class="parameters">(<a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a>&nbsp;element)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="getModElementListTemplates(net.mcreator.workspace.elements.ModElement,net.mcreator.element.GeneratableElement)">
+<h3>getModElementListTemplates</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="GeneratorTemplatesList.html" title="class in net.mcreator.generator">GeneratorTemplatesList</a>&gt;</span>&nbsp;<span class="element-name">getModElementListTemplates</span><wbr><span class="parameters">(<a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a>&nbsp;element,
+ <a href="../element/GeneratableElement.html" title="class in net.mcreator.element">GeneratableElement</a>&nbsp;generatableElement)</span></div>
+</section>
+</li>
+<li>
 <section class="detail" id="getModElementThisFileBelongsTo(java.io.File)">
 <h3>getModElementThisFileBelongsTo</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../workspace/elements/ModElement.html" title="class in net.mcreator.workspace.elements">ModElement</a></span>&nbsp;<span class="element-name">getModElementThisFileBelongsTo</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
@@ -492,12 +509,6 @@ implements <a href="IGenerator.html" title="interface in net.mcreator.generator"
 <section class="detail" id="runResourceSetupTasks()">
 <h3>runResourceSetupTasks</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">runResourceSetupTasks</span>()</div>
-</section>
-</li>
-<li>
-<section class="detail" id="runSetupTasks(java.util.List)">
-<h3>runSetupTasks</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">runSetupTasks</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;?&gt;&nbsp;setupTaks)</span></div>
 </section>
 </li>
 <li>
