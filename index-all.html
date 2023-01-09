@@ -795,6 +795,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#bodyImmuneToFire" class="member-name-link">bodyImmuneToFire</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#bodyItemCustomModelName" class="member-name-link">bodyItemCustomModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#bodyItemRenderType" class="member-name-link">bodyItemRenderType</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#bodyModelName" class="member-name-link">bodyModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#bodyModelPart" class="member-name-link">bodyModelPart</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
@@ -816,6 +820,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html#BOOTS" class="member-name-link">BOOTS</a> - Enum constant in enum class net.mcreator.ui.init.<a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html" title="enum class in net.mcreator.ui.init">ArmorMakerTexturesCache.ArmorTexturePart</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#bootsImmuneToFire" class="member-name-link">bootsImmuneToFire</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#bootsItemCustomModelName" class="member-name-link">bootsItemCustomModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#bootsItemRenderType" class="member-name-link">bootsItemRenderType</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#bootsModelName" class="member-name-link">bootsModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -1928,7 +1936,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/action/ActionRegistry.html#deleteFile" class="member-name-link">deleteFile</a> - Variable in class net.mcreator.ui.action.<a href="net/mcreator/ui/action/ActionRegistry.html" title="class in net.mcreator.ui.action">ActionRegistry</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/LocalizationUtils.html#deleteLocalizationKeys(net.mcreator.generator.Generator,net.mcreator.workspace.elements.ModElement,java.util.List)" class="member-name-link">deleteLocalizationKeys(Generator, ModElement, List&lt;?&gt;)</a> - Static method in class net.mcreator.generator.<a href="net/mcreator/generator/LocalizationUtils.html" title="class in net.mcreator.generator">LocalizationUtils</a></dt>
+<dt><a href="net/mcreator/generator/LocalizationUtils.html#deleteLocalizationKeys(net.mcreator.generator.Generator,net.mcreator.element.GeneratableElement,java.util.List)" class="member-name-link">deleteLocalizationKeys(Generator, GeneratableElement, List&lt;?&gt;)</a> - Static method in class net.mcreator.generator.<a href="net/mcreator/generator/LocalizationUtils.html" title="class in net.mcreator.generator">LocalizationUtils</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/browser/WorkspaceFileBrowser.html#deleteSelectedFile()" class="member-name-link">deleteSelectedFile()</a> - Method in class net.mcreator.ui.browser.<a href="net/mcreator/ui/browser/WorkspaceFileBrowser.html" title="class in net.mcreator.ui.browser">WorkspaceFileBrowser</a></dt>
 <dd>
@@ -3104,11 +3112,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="net/mcreator/generator/Generator.html#generateBase(boolean)" class="member-name-link">generateBase(boolean)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>
-<div class="block">Generates the generator mod base files.</div>
-</dd>
-<dt><a href="net/mcreator/generator/Generator.html#generateBase(boolean,boolean)" class="member-name-link">generateBase(boolean, boolean)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
-<dd>
-<div class="block">Generates the generator mod base files and optionally writes them to disk.</div>
+<div class="block">Generates the generator mod base files and writes them to disk.</div>
 </dd>
 <dt><a href="net/mcreator/generator/template/TemplateGenerator.html#generateBaseFromTemplate(java.lang.String,java.util.Map,java.lang.String)" class="member-name-link">generateBaseFromTemplate(String, Map&lt;String, Object&gt;, String)</a> - Method in class net.mcreator.generator.template.<a href="net/mcreator/generator/template/TemplateGenerator.html" title="class in net.mcreator.generator.template">TemplateGenerator</a></dt>
 <dd>&nbsp;</dd>
@@ -3849,7 +3853,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/generator/blockly/ProceduralBlockCodeGenerator.html#getBlockType()" class="member-name-link">getBlockType()</a> - Method in record class net.mcreator.generator.blockly.<a href="net/mcreator/generator/blockly/ProceduralBlockCodeGenerator.html" title="class in net.mcreator.generator.blockly">ProceduralBlockCodeGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getBodyItemModel()" class="member-name-link">getBodyItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#getBodyModel()" class="member-name-link">getBodyModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getBootsItemModel()" class="member-name-link">getBootsItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#getBootsModel()" class="member-name-link">getBootsModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -4349,7 +4357,9 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/vcs/WorkspaceVCS.html#getGit()" class="member-name-link">getGit()</a> - Method in class net.mcreator.vcs.<a href="net/mcreator/vcs/WorkspaceVCS.html" title="class in net.mcreator.vcs">WorkspaceVCS</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getGlobalTemplatesList(java.util.Map,boolean,java.util.concurrent.atomic.AtomicInteger)" class="member-name-link">getGlobalTemplatesList(Map&lt;?, ?&gt;, boolean, AtomicInteger)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
+<dt><a href="net/mcreator/generator/Generator.html#getGlobalTemplatesListForDefinition(java.util.Map,boolean,java.util.concurrent.atomic.AtomicInteger)" class="member-name-link">getGlobalTemplatesListForDefinition(Map&lt;?, ?&gt;, boolean, AtomicInteger)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/generator/Generator.html#getGlobalTemplatesListForModElementType(net.mcreator.element.ModElementType,boolean,java.util.concurrent.atomic.AtomicInteger)" class="member-name-link">getGlobalTemplatesListForModElementType(ModElementType&lt;?&gt;, boolean, AtomicInteger)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/blockly/BlocklyJavascriptBridge.html#getGlobalTriggers()" class="member-name-link">getGlobalTriggers()</a> - Method in class net.mcreator.ui.blockly.<a href="net/mcreator/ui/blockly/BlocklyJavascriptBridge.html" title="class in net.mcreator.ui.blockly">BlocklyJavascriptBridge</a></dt>
 <dd>&nbsp;</dd>
@@ -4394,6 +4404,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/element/parts/gui/Slot.html#getHeight(net.mcreator.workspace.Workspace)" class="member-name-link">getHeight(Workspace)</a> - Method in class net.mcreator.element.parts.gui.<a href="net/mcreator/element/parts/gui/Slot.html" title="class in net.mcreator.element.parts.gui">Slot</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/util/image/TiledImageUtils.html#getHeightInTiles()" class="member-name-link">getHeightInTiles()</a> - Method in class net.mcreator.util.image.<a href="net/mcreator/util/image/TiledImageUtils.html" title="class in net.mcreator.util.image">TiledImageUtils</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getHelmetItemModel()" class="member-name-link">getHelmetItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#getHelmetModel()" class="member-name-link">getHelmetModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -4489,6 +4501,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/themes/ColorScheme.html#getInterfaceAccentColor()" class="member-name-link">getInterfaceAccentColor()</a> - Method in class net.mcreator.themes.<a href="net/mcreator/themes/ColorScheme.html" title="class in net.mcreator.themes">ColorScheme</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getItemCustomModelNameFor(java.lang.String)" class="member-name-link">getItemCustomModelNameFor(String)</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Block.html#getItemModel()" class="member-name-link">getItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Block.html" title="class in net.mcreator.element.types">Block</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/interfaces/IItemWithModel.html#getItemModel()" class="member-name-link">getItemModel()</a> - Method in interface net.mcreator.element.types.interfaces.<a href="net/mcreator/element/types/interfaces/IItemWithModel.html" title="interface in net.mcreator.element.types.interfaces">IItemWithModel</a></dt>
@@ -4500,6 +4514,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/element/types/RangedItem.html#getItemModel()" class="member-name-link">getItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/RangedItem.html" title="class in net.mcreator.element.types">RangedItem</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Tool.html#getItemModel()" class="member-name-link">getItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Tool.html" title="class in net.mcreator.element.types">Tool</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getItemModelTextureMap(java.lang.String)" class="member-name-link">getItemModelTextureMap(String)</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getItemTextureFor(java.lang.String)" class="member-name-link">getItemTextureFor(String)</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/misc/WorkspaceInfo.html#getItemTextureMap()" class="member-name-link">getItemTextureMap()</a> - Method in class net.mcreator.workspace.misc.<a href="net/mcreator/workspace/misc/WorkspaceInfo.html" title="class in net.mcreator.workspace.misc">WorkspaceInfo</a></dt>
 <dd>&nbsp;</dd>
@@ -4554,6 +4572,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/ui/views/editor/image/versioning/change/Change.html#getLayer()" class="member-name-link">getLayer()</a> - Method in class net.mcreator.ui.views.editor.image.versioning.change.<a href="net/mcreator/ui/views/editor/image/versioning/change/Change.html" title="class in net.mcreator.ui.views.editor.image.versioning.change">Change</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/views/editor/image/ImageMakerView.html#getLayerPanel()" class="member-name-link">getLayerPanel()</a> - Method in class net.mcreator.ui.views.editor.image.<a href="net/mcreator/ui/views/editor/image/ImageMakerView.html" title="class in net.mcreator.ui.views.editor.image">ImageMakerView</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#getLeggingsItemModel()" class="member-name-link">getLeggingsItemModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#getLeggingsModel()" class="member-name-link">getLeggingsModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -4734,11 +4754,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/help/ModElementHelpContext.html#getModElementFromGUI()" class="member-name-link">getModElementFromGUI()</a> - Method in record class net.mcreator.ui.help.<a href="net/mcreator/ui/help/ModElementHelpContext.html" title="class in net.mcreator.ui.help">ModElementHelpContext</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getModElementGeneratorTemplatesList(net.mcreator.workspace.elements.ModElement)" class="member-name-link">getModElementGeneratorTemplatesList(ModElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getModElementGeneratorTemplatesList(net.mcreator.workspace.elements.ModElement,net.mcreator.element.GeneratableElement)" class="member-name-link">getModElementGeneratorTemplatesList(ModElement, GeneratableElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getModElementGlobalTemplatesList(net.mcreator.element.ModElementType,boolean,java.util.concurrent.atomic.AtomicInteger)" class="member-name-link">getModElementGlobalTemplatesList(ModElementType&lt;?&gt;, boolean, AtomicInteger)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
+<dt><a href="net/mcreator/generator/Generator.html#getModElementGeneratorTemplatesList(net.mcreator.element.GeneratableElement)" class="member-name-link">getModElementGeneratorTemplatesList(GeneratableElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/plugin/events/ui/ModElementGUIEvent.html#getModElementGUI()" class="member-name-link">getModElementGUI()</a> - Method in class net.mcreator.plugin.events.ui.<a href="net/mcreator/plugin/events/ui/ModElementGUIEvent.html" title="class in net.mcreator.plugin.events.ui">ModElementGUIEvent</a></dt>
 <dd>&nbsp;</dd>
@@ -4748,9 +4764,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/elements/ModElementManager.html#getModElementIcon(net.mcreator.workspace.elements.ModElement)" class="member-name-link">getModElementIcon(ModElement)</a> - Static method in class net.mcreator.workspace.elements.<a href="net/mcreator/workspace/elements/ModElementManager.html" title="class in net.mcreator.workspace.elements">ModElementManager</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getModElementListTemplates(net.mcreator.workspace.elements.ModElement)" class="member-name-link">getModElementListTemplates(ModElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/Generator.html#getModElementListTemplates(net.mcreator.workspace.elements.ModElement,net.mcreator.element.GeneratableElement)" class="member-name-link">getModElementListTemplates(ModElement, GeneratableElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
+<dt><a href="net/mcreator/generator/Generator.html#getModElementListTemplates(net.mcreator.element.GeneratableElement)" class="member-name-link">getModElementListTemplates(GeneratableElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/IWorkspaceProvider.html#getModElementManager()" class="member-name-link">getModElementManager()</a> - Method in interface net.mcreator.workspace.<a href="net/mcreator/workspace/IWorkspaceProvider.html" title="interface in net.mcreator.workspace">IWorkspaceProvider</a></dt>
 <dd>&nbsp;</dd>
@@ -5364,7 +5378,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/MCreatorApplication.html#getTaskbarIntegration()" class="member-name-link">getTaskbarIntegration()</a> - Method in class net.mcreator.ui.<a href="net/mcreator/ui/MCreatorApplication.html" title="class in net.mcreator.ui">MCreatorApplication</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/GeneratorTemplate.html#getTemplateData()" class="member-name-link">getTemplateData()</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
+<dt><a href="net/mcreator/generator/GeneratorTemplate.html#getTemplateDefinition()" class="member-name-link">getTemplateDefinition()</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/generator/GeneratorConfiguration.html#getTemplateGenConfigFromName(java.lang.String)" class="member-name-link">getTemplateGenConfigFromName(String)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorConfiguration.html" title="class in net.mcreator.generator">GeneratorConfiguration</a></dt>
 <dd>&nbsp;</dd>
@@ -5372,8 +5386,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/generator/Generator.html#getTemplateGeneratorFromName(java.lang.String)" class="member-name-link">getTemplateGeneratorFromName(String)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="net/mcreator/generator/GeneratorTemplate.html#getTemplateIdentificator()" class="member-name-link">getTemplateIdentificator()</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/generator/GeneratorTemplate.html#getTemplateIdentifier()" class="member-name-link">getTemplateIdentifier()</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
+<dd>
+<div class="block">Used to determine what template belongs to what file.</div>
+</dd>
 <dt><a href="net/mcreator/ui/init/ArmorMakerTexturesCache.html#getTemplateNames()" class="member-name-link">getTemplateNames()</a> - Static method in class net.mcreator.ui.init.<a href="net/mcreator/ui/init/ArmorMakerTexturesCache.html" title="class in net.mcreator.ui.init">ArmorMakerTexturesCache</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/generator/ListTemplate.html#getTemplatesList()" class="member-name-link">getTemplatesList()</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/ListTemplate.html" title="class in net.mcreator.generator">ListTemplate</a></dt>
@@ -6066,7 +6082,15 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/misc/WorkspaceInfo.html#hasBlocksMineableWith(java.lang.String)" class="member-name-link">hasBlocksMineableWith(String)</a> - Method in class net.mcreator.workspace.misc.<a href="net/mcreator/workspace/misc/WorkspaceInfo.html" title="class in net.mcreator.workspace.misc">WorkspaceInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasBodyNormalModel()" class="member-name-link">hasBodyNormalModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasBodyToolModel()" class="member-name-link">hasBodyToolModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/LootTable.Pool.html#hasbonusrolls" class="member-name-link">hasbonusrolls</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/LootTable.Pool.html" title="class in net.mcreator.element.types">LootTable.Pool</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasBootsNormalModel()" class="member-name-link">hasBootsNormalModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasBootsToolModel()" class="member-name-link">hasBootsToolModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/GUI.html#hasButtonEvents()" class="member-name-link">hasButtonEvents()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/GUI.html" title="class in net.mcreator.element.types">GUI</a></dt>
 <dd>&nbsp;</dd>
@@ -6264,6 +6288,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/java/JModLibraryInfo.html#hashCodeImpl()" class="member-name-link">hashCodeImpl()</a> - Method in class net.mcreator.java.<a href="net/mcreator/java/JModLibraryInfo.html" title="class in net.mcreator.java">JModLibraryInfo</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasHelmetNormalModel()" class="member-name-link">hasHelmetNormalModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasHelmetToolModel()" class="member-name-link">hasHelmetToolModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Block.html#hasInventory" class="member-name-link">hasInventory</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Block.html" title="class in net.mcreator.element.types">Block</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Item.html#hasInventory()" class="member-name-link">hasInventory()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Item.html" title="class in net.mcreator.element.types">Item</a></dt>
@@ -6271,6 +6299,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/ui/component/CollapsiblePanel.html#hasInvisibleComponent()" class="member-name-link">hasInvisibleComponent()</a> - Method in class net.mcreator.ui.component.<a href="net/mcreator/ui/component/CollapsiblePanel.html" title="class in net.mcreator.ui.component">CollapsiblePanel</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/misc/WorkspaceInfo.html#hasJavaModels()" class="member-name-link">hasJavaModels()</a> - Method in class net.mcreator.workspace.misc.<a href="net/mcreator/workspace/misc/WorkspaceInfo.html" title="class in net.mcreator.workspace.misc">WorkspaceInfo</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasLeggingsNormalModel()" class="member-name-link">hasLeggingsNormalModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#hasLeggingsToolModel()" class="member-name-link">hasLeggingsToolModel()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/workspace/elements/ModElementManager.html#hasModElementGeneratableElement(net.mcreator.workspace.elements.ModElement)" class="member-name-link">hasModElementGeneratableElement(ModElement)</a> - Method in class net.mcreator.workspace.elements.<a href="net/mcreator/workspace/elements/ModElementManager.html" title="class in net.mcreator.workspace.elements">ModElementManager</a></dt>
 <dd>&nbsp;</dd>
@@ -6335,6 +6367,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html#HELMET" class="member-name-link">HELMET</a> - Enum constant in enum class net.mcreator.ui.init.<a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html" title="enum class in net.mcreator.ui.init">ArmorMakerTexturesCache.ArmorTexturePart</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#helmetImmuneToFire" class="member-name-link">helmetImmuneToFire</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#helmetItemCustomModelName" class="member-name-link">helmetItemCustomModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#helmetItemRenderType" class="member-name-link">helmetItemRenderType</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#helmetModelName" class="member-name-link">helmetModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -7558,6 +7594,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html#LEGGINGS" class="member-name-link">LEGGINGS</a> - Enum constant in enum class net.mcreator.ui.init.<a href="net/mcreator/ui/init/ArmorMakerTexturesCache.ArmorTexturePart.html" title="enum class in net.mcreator.ui.init">ArmorMakerTexturesCache.ArmorTexturePart</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#leggingsImmuneToFire" class="member-name-link">leggingsImmuneToFire</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#leggingsItemCustomModelName" class="member-name-link">leggingsItemCustomModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/element/types/Armor.html#leggingsItemRenderType" class="member-name-link">leggingsItemRenderType</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Armor.html#leggingsModelName" class="member-name-link">leggingsModelName</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/Armor.html" title="class in net.mcreator.element.types">Armor</a></dt>
 <dd>&nbsp;</dd>
@@ -10537,7 +10577,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the value of the <code>removed</code> record component.</div>
 </dd>
-<dt><a href="net/mcreator/generator/Generator.html#removeElementFilesAndLangKeys(net.mcreator.workspace.elements.ModElement)" class="member-name-link">removeElementFilesAndLangKeys(ModElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
+<dt><a href="net/mcreator/generator/Generator.html#removeElementFilesAndLangKeys(net.mcreator.element.GeneratableElement)" class="member-name-link">removeElementFilesAndLangKeys(GeneratableElement)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/Generator.html" title="class in net.mcreator.generator">Generator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/io/FileIO.html#removeEmptyDirs(java.io.File)" class="member-name-link">removeEmptyDirs(File)</a> - Static method in class net.mcreator.io.<a href="net/mcreator/io/FileIO.html" title="class in net.mcreator.io">FileIO</a></dt>
 <dd>&nbsp;</dd>
@@ -11512,6 +11552,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="net/mcreator/workspace/ShareableZIPManager.html#%3Cinit%3E()" class="member-name-link">ShareableZIPManager()</a> - Constructor for class net.mcreator.workspace.<a href="net/mcreator/workspace/ShareableZIPManager.html" title="class in net.mcreator.workspace">ShareableZIPManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/RangedItem.html#shootConstantly" class="member-name-link">shootConstantly</a> - Variable in class net.mcreator.element.types.<a href="net/mcreator/element/types/RangedItem.html" title="class in net.mcreator.element.types">RangedItem</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/mcreator/generator/GeneratorTemplate.html#shouldBeSkippedBasedOnCondition(net.mcreator.generator.Generator,java.lang.Object)" class="member-name-link">shouldBeSkippedBasedOnCondition(Generator, Object)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/element/types/Block.html#shouldDisableOffset()" class="member-name-link">shouldDisableOffset()</a> - Method in class net.mcreator.element.types.<a href="net/mcreator/element/types/Block.html" title="class in net.mcreator.element.types">Block</a></dt>
 <dd>&nbsp;</dd>
@@ -12593,6 +12635,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">This method performs parentheses optimization and adds a (float) cast to the given code if needed.</div>
 </dd>
+<dt><a href="net/mcreator/generator/GeneratorTemplate.html#toGeneratorFile(java.lang.String)" class="member-name-link">toGeneratorFile(String)</a> - Method in class net.mcreator.generator.<a href="net/mcreator/generator/GeneratorTemplate.html" title="class in net.mcreator.generator">GeneratorTemplate</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/init/L10N.html#togglebutton(java.lang.String,java.lang.Object...)" class="member-name-link">togglebutton(String, Object...)</a> - Static method in class net.mcreator.ui.init.<a href="net/mcreator/ui/init/L10N.html" title="class in net.mcreator.ui.init">L10N</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/mcreator/ui/component/CollapsiblePanel.html#toggleVisibility()" class="member-name-link">toggleVisibility()</a> - Method in class net.mcreator.ui.component.<a href="net/mcreator/ui/component/CollapsiblePanel.html" title="class in net.mcreator.ui.component">CollapsiblePanel</a></dt>
