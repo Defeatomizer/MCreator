@@ -51,6 +51,8 @@ net.mcreator.plugin.events
 net.mcreator.plugin.events.ui
 net.mcreator.plugin.events.workspace
 net.mcreator.preferences
+net.mcreator.preferences.data
+net.mcreator.preferences.entries
 net.mcreator.themes
 net.mcreator.ui
 net.mcreator.ui.action
