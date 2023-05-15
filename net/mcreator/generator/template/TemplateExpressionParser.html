@@ -43,7 +43,7 @@ loadScripts(document, 'script');</script>
 <div>
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -80,21 +80,6 @@ loadScripts(document, 'script');</script>
 </section>
 <section class="summary">
 <ul class="summary-list">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<li>
-<section class="nested-class-summary" id="nested-class-summary">
-<h2>Nested Class Summary</h2>
-<div class="caption"><span>Nested Classes</span></div>
-<div class="summary-table three-column-summary">
-<div class="table-header col-first">Modifier and Type</div>
-<div class="table-header col-second">Class</div>
-<div class="table-header col-last">Description</div>
-<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
-<div class="col-second even-row-color"><code><a href="TemplateExpressionParser.Operator.html" class="type-name-link" title="enum class in net.mcreator.generator.template">TemplateExpressionParser.Operator</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-</div>
-</section>
-</li>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <li>
 <section class="constructor-summary" id="constructor-summary">
@@ -125,10 +110,9 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;dataHolder)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldSkipTemplateBasedOnCondition(net.mcreator.generator.Generator,java.lang.Object,java.lang.Object,net.mcreator.generator.template.TemplateExpressionParser.Operator)" class="member-name-link">shouldSkipTemplateBasedOnCondition</a><wbr>(<a href="../Generator.html" title="class in net.mcreator.generator">Generator</a>&nbsp;generator,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionRaw,
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionDataProvider,
- <a href="TemplateExpressionParser.Operator.html" title="enum class in net.mcreator.generator.template">TemplateExpressionParser.Operator</a>&nbsp;operator)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#shouldSkipTemplateBasedOnCondition(net.mcreator.generator.Generator,java.util.Map,java.lang.Object)" class="member-name-link">shouldSkipTemplateBasedOnCondition</a><wbr>(<a href="../Generator.html" title="class in net.mcreator.generator">Generator</a>&nbsp;generator,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;?,<wbr>?&gt;&nbsp;template,
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionDataProvider)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -162,15 +146,14 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="shouldSkipTemplateBasedOnCondition(net.mcreator.generator.Generator,java.lang.Object,java.lang.Object,net.mcreator.generator.template.TemplateExpressionParser.Operator)">
+<section class="detail" id="shouldSkipTemplateBasedOnCondition(net.mcreator.generator.Generator,java.util.Map,java.lang.Object)">
 <h3>shouldSkipTemplateBasedOnCondition</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">shouldSkipTemplateBasedOnCondition</span><wbr><span class="parameters">(@Nonnull
  <a href="../Generator.html" title="class in net.mcreator.generator">Generator</a>&nbsp;generator,
+ @Nonnull
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;?,<wbr>?&gt;&nbsp;template,
  @Nullable
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionRaw,
- @Nullable
- <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionDataProvider,
- <a href="TemplateExpressionParser.Operator.html" title="enum class in net.mcreator.generator.template">TemplateExpressionParser.Operator</a>&nbsp;operator)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;conditionDataProvider)</span></div>
 </section>
 </li>
 <li>
