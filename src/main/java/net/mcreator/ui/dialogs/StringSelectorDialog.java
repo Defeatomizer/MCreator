@@ -69,8 +69,8 @@ public class StringSelectorDialog extends ListSelectorDialog<String> {
 			var label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			label.setText(value.toString().replace("CUSTOM:", ""));
 			if (value.toString().contains("CUSTOM:"))
-				setIcon(new ImageIcon(ImageUtils.resize(
-						MCItem.getBlockIconBasedOnName(mcreator.getWorkspace(), value.toString()).getImage(), 18)));
+				setIcon(new ImageIcon(ImageUtils.resize(MCItem.getBlockIconBasedOnName(
+						mcreator.getWorkspace(), value.toString().replace(":Flowing", "")).getImage(), 18)));
 			return label;
 		}
 	}
