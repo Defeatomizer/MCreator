@@ -55,7 +55,6 @@ net.mcreator.plugin.events.workspace
 net.mcreator.preferences
 net.mcreator.preferences.data
 net.mcreator.preferences.entries
-net.mcreator.themes
 net.mcreator.ui
 net.mcreator.ui.action
 net.mcreator.ui.action.impl
@@ -90,6 +89,7 @@ net.mcreator.ui.laf
 net.mcreator.ui.laf.renderer
 net.mcreator.ui.laf.renderer.elementlist
 net.mcreator.ui.laf.renderer.elementlist.special
+net.mcreator.ui.laf.themes
 net.mcreator.ui.minecraft
 net.mcreator.ui.minecraft.boundingboxes
 net.mcreator.ui.minecraft.loottable

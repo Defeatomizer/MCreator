@@ -107,7 +107,6 @@ loadScripts(document, 'script');</script>
 <li><a href="net/mcreator/preferences/package-tree.html">net.mcreator.preferences</a>, </li>
 <li><a href="net/mcreator/preferences/data/package-tree.html">net.mcreator.preferences.data</a>, </li>
 <li><a href="net/mcreator/preferences/entries/package-tree.html">net.mcreator.preferences.entries</a>, </li>
-<li><a href="net/mcreator/themes/package-tree.html">net.mcreator.themes</a>, </li>
 <li><a href="net/mcreator/ui/package-tree.html">net.mcreator.ui</a>, </li>
 <li><a href="net/mcreator/ui/action/package-tree.html">net.mcreator.ui.action</a>, </li>
 <li><a href="net/mcreator/ui/action/impl/package-tree.html">net.mcreator.ui.action.impl</a>, </li>
@@ -142,6 +141,7 @@ loadScripts(document, 'script');</script>
 <li><a href="net/mcreator/ui/laf/renderer/package-tree.html">net.mcreator.ui.laf.renderer</a>, </li>
 <li><a href="net/mcreator/ui/laf/renderer/elementlist/package-tree.html">net.mcreator.ui.laf.renderer.elementlist</a>, </li>
 <li><a href="net/mcreator/ui/laf/renderer/elementlist/special/package-tree.html">net.mcreator.ui.laf.renderer.elementlist.special</a>, </li>
+<li><a href="net/mcreator/ui/laf/themes/package-tree.html">net.mcreator.ui.laf.themes</a>, </li>
 <li><a href="net/mcreator/ui/minecraft/package-tree.html">net.mcreator.ui.minecraft</a>, </li>
 <li><a href="net/mcreator/ui/minecraft/boundingboxes/package-tree.html">net.mcreator.ui.minecraft.boundingboxes</a>, </li>
 <li><a href="net/mcreator/ui/minecraft/loottable/package-tree.html">net.mcreator.ui.minecraft.loottable</a>, </li>
@@ -459,7 +459,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.mcreator.io.writer.<a href="net/mcreator/io/writer/ClassWriter.html" class="type-name-link" title="class in net.mcreator.io.writer">ClassWriter</a></li>
 <li class="circle">net.mcreator.java.<a href="net/mcreator/java/CodeCleanup.html" class="type-name-link" title="class in net.mcreator.java">CodeCleanup</a></li>
 <li class="circle">net.mcreator.ui.dialogs.<a href="net/mcreator/ui/dialogs/CodeErrorDialog.html" class="type-name-link" title="class in net.mcreator.ui.dialogs">CodeErrorDialog</a></li>
-<li class="circle">net.mcreator.themes.<a href="net/mcreator/themes/ColorScheme.html" class="type-name-link" title="class in net.mcreator.themes">ColorScheme</a></li>
+<li class="circle">net.mcreator.ui.laf.themes.<a href="net/mcreator/ui/laf/themes/ColorScheme.html" class="type-name-link" title="class in net.mcreator.ui.laf.themes">ColorScheme</a></li>
 <li class="circle">net.mcreator.ui.component.util.<a href="net/mcreator/ui/component/util/ComboBoxFullWidthPopup.html" class="type-name-link" title="class in net.mcreator.ui.component.util">ComboBoxFullWidthPopup</a> (implements javax.swing.event.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/event/PopupMenuListener.html" title="class or interface in javax.swing.event" class="external-link">PopupMenuListener</a>)</li>
 <li class="circle">net.mcreator.ui.component.util.<a href="net/mcreator/ui/component/util/ComboBoxUtil.html" class="type-name-link" title="class in net.mcreator.ui.component.util">ComboBoxUtil</a></li>
 <li class="circle">net.mcreator.element.converter.v2022_2.<a href="net/mcreator/element/converter/v2022_2/CommandParameterBlockFixer.html" class="type-name-link" title="class in net.mcreator.element.converter.v2022_2">CommandParameterBlockFixer</a> (implements net.mcreator.element.converter.<a href="net/mcreator/element/converter/IConverter.html" title="interface in net.mcreator.element.converter">IConverter</a>)</li>
@@ -1217,6 +1217,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.mcreator.io.writer.<a href="net/mcreator/io/writer/JSONWriter.html" class="type-name-link" title="class in net.mcreator.io.writer">JSONWriter</a></li>
 <li class="circle">net.mcreator.ui.component.util.<a href="net/mcreator/ui/component/util/KeyStrokes.html" class="type-name-link" title="class in net.mcreator.ui.component.util">KeyStrokes</a></li>
 <li class="circle">net.mcreator.ui.init.<a href="net/mcreator/ui/init/L10N.html" class="type-name-link" title="class in net.mcreator.ui.init">L10N</a></li>
+<li class="circle">net.mcreator.ui.laf.<a href="net/mcreator/ui/laf/LafUtil.html" class="type-name-link" title="class in net.mcreator.ui.laf">LafUtil</a></li>
 <li class="circle">net.mcreator.<a href="net/mcreator/Launcher.html" class="type-name-link" title="class in net.mcreator">Launcher</a></li>
 <li class="circle">net.mcreator.ui.views.editor.image.layer.<a href="net/mcreator/ui/views/editor/image/layer/Layer.html" class="type-name-link" title="class in net.mcreator.ui.views.editor.image.layer">Layer</a></li>
 <li class="circle">org.fife.rsta.ac.java.buildpath.LibraryInfo (implements java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Cloneable.html" title="class or interface in java.lang" class="external-link">Cloneable</a>, java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;T&gt;)
@@ -1232,19 +1233,6 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.mcreator.generator.<a href="net/mcreator/generator/LocalizationUtils.html" class="type-name-link" title="class in net.mcreator.generator">LocalizationUtils</a></li>
 <li class="circle">net.mcreator.blockly.java.blocks.<a href="net/mcreator/blockly/java/blocks/LogicNegateBlock.html" class="type-name-link" title="class in net.mcreator.blockly.java.blocks">LogicNegateBlock</a> (implements net.mcreator.blockly.<a href="net/mcreator/blockly/IBlockGenerator.html" title="interface in net.mcreator.blockly">IBlockGenerator</a>)</li>
 <li class="circle">net.mcreator.element.parts.procedure.<a href="net/mcreator/element/parts/procedure/LogicProcedure.GSONAdapter.html" class="type-name-link" title="class in net.mcreator.element.parts.procedure">LogicProcedure.GSONAdapter</a> (implements com.google.gson.JsonDeserializer&lt;T&gt;)</li>
-<li class="circle">javax.swing.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/LookAndFeel.html" class="type-name-link external-link" title="class or interface in javax.swing">LookAndFeel</a>
-<ul>
-<li class="circle">javax.swing.plaf.basic.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/plaf/basic/BasicLookAndFeel.html" class="type-name-link external-link" title="class or interface in javax.swing.plaf.basic">BasicLookAndFeel</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
-<ul>
-<li class="circle">javax.swing.plaf.metal.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.desktop/javax/swing/plaf/metal/MetalLookAndFeel.html" class="type-name-link external-link" title="class or interface in javax.swing.plaf.metal">MetalLookAndFeel</a>
-<ul>
-<li class="circle">net.mcreator.ui.laf.<a href="net/mcreator/ui/laf/MCreatorLookAndFeel.html" class="type-name-link" title="class in net.mcreator.ui.laf">MCreatorLookAndFeel</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="circle">net.mcreator.blockly.java.blocks.<a href="net/mcreator/blockly/java/blocks/LoopBlock.html" class="type-name-link" title="class in net.mcreator.blockly.java.blocks">LoopBlock</a> (implements net.mcreator.blockly.<a href="net/mcreator/blockly/IBlockGenerator.html" title="interface in net.mcreator.blockly">IBlockGenerator</a>)</li>
 <li class="circle">net.mcreator.element.types.<a href="net/mcreator/element/types/LootTable.Pool.html" class="type-name-link" title="class in net.mcreator.element.types">LootTable.Pool</a></li>
 <li class="circle">net.mcreator.element.types.<a href="net/mcreator/element/types/LootTable.Pool.Entry.html" class="type-name-link" title="class in net.mcreator.element.types">LootTable.Pool.Entry</a></li>
@@ -1584,8 +1572,8 @@ loadScripts(document, 'script');</script>
 <li class="circle">net.mcreator.workspace.resources.<a href="net/mcreator/workspace/resources/TexturedModel.TextureMapping.html" class="type-name-link" title="class in net.mcreator.workspace.resources">TexturedModel.TextureMapping</a></li>
 <li class="circle">net.mcreator.ui.dialogs.<a href="net/mcreator/ui/dialogs/TextureImportDialogs.html" class="type-name-link" title="class in net.mcreator.ui.dialogs">TextureImportDialogs</a></li>
 <li class="circle">net.mcreator.ui.dialogs.<a href="net/mcreator/ui/dialogs/TextureMappingDialog.html" class="type-name-link" title="class in net.mcreator.ui.dialogs">TextureMappingDialog</a></li>
-<li class="circle">net.mcreator.themes.<a href="net/mcreator/themes/Theme.html" class="type-name-link" title="class in net.mcreator.themes">Theme</a></li>
-<li class="circle">net.mcreator.themes.<a href="net/mcreator/themes/ThemeLoader.html" class="type-name-link" title="class in net.mcreator.themes">ThemeLoader</a></li>
+<li class="circle">net.mcreator.ui.laf.themes.<a href="net/mcreator/ui/laf/themes/Theme.html" class="type-name-link" title="class in net.mcreator.ui.laf.themes">Theme</a></li>
+<li class="circle">net.mcreator.ui.laf.themes.<a href="net/mcreator/ui/laf/themes/ThemeLoader.html" class="type-name-link" title="class in net.mcreator.ui.laf.themes">ThemeLoader</a></li>
 <li class="circle">net.mcreator.ui.dialogs.preferences.<a href="net/mcreator/ui/dialogs/preferences/ThemesPanel.html" class="type-name-link" title="class in net.mcreator.ui.dialogs.preferences">ThemesPanel</a></li>
 <li class="circle">net.mcreator.ui.component.util.<a href="net/mcreator/ui/component/util/ThreadUtil.html" class="type-name-link" title="class in net.mcreator.ui.component.util">ThreadUtil</a></li>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html" class="type-name-link external-link" title="class or interface in java.lang">Throwable</a> (implements java.io.<a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a>)
