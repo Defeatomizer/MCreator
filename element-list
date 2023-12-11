@@ -47,11 +47,11 @@ net.mcreator.io.writer
 net.mcreator.io.zip
 net.mcreator.java
 net.mcreator.minecraft
-net.mcreator.minecraft.api
 net.mcreator.plugin
 net.mcreator.plugin.events
 net.mcreator.plugin.events.ui
 net.mcreator.plugin.events.workspace
+net.mcreator.plugin.modapis
 net.mcreator.preferences
 net.mcreator.preferences.data
 net.mcreator.preferences.entries
@@ -93,6 +93,7 @@ net.mcreator.ui.laf.themes
 net.mcreator.ui.minecraft
 net.mcreator.ui.minecraft.boundingboxes
 net.mcreator.ui.minecraft.loottable
+net.mcreator.ui.minecraft.modellayers
 net.mcreator.ui.minecraft.potions
 net.mcreator.ui.minecraft.recipemakers
 net.mcreator.ui.minecraft.spawntypes
@@ -112,6 +113,8 @@ net.mcreator.ui.views
 net.mcreator.ui.views.editor.image
 net.mcreator.ui.views.editor.image.action
 net.mcreator.ui.views.editor.image.canvas
+net.mcreator.ui.views.editor.image.clipboard
+net.mcreator.ui.views.editor.image.clipboard.transferables
 net.mcreator.ui.views.editor.image.layer
 net.mcreator.ui.views.editor.image.tool
 net.mcreator.ui.views.editor.image.tool.action
