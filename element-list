@@ -52,6 +52,7 @@ net.mcreator.io.writer
 net.mcreator.io.zip
 net.mcreator.java
 net.mcreator.java.debug
+net.mcreator.java.monitoring
 net.mcreator.minecraft
 net.mcreator.plugin
 net.mcreator.plugin.events
@@ -107,6 +108,7 @@ net.mcreator.ui.minecraft.loottable
 net.mcreator.ui.minecraft.modellayers
 net.mcreator.ui.minecraft.potions
 net.mcreator.ui.minecraft.recipemakers
+net.mcreator.ui.minecraft.recourcepack
 net.mcreator.ui.minecraft.spawntypes
 net.mcreator.ui.minecraft.states
 net.mcreator.ui.minecraft.states.block
@@ -154,3 +156,4 @@ net.mcreator.workspace.misc
 net.mcreator.workspace.references
 net.mcreator.workspace.resources
 net.mcreator.workspace.settings
+net.mcreator.workspace.settings.user
