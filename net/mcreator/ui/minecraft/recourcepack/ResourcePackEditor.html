@@ -156,8 +156,8 @@ implements <a href="../../workspace/IReloadableFilterable.html" title="interface
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.mcreator.ui.MCreator,net.mcreator.ui.workspace.WorkspacePanel)" class="member-name-link">ResourcePackEditor</a><wbr>(<a href="../../MCreator.html" title="class in net.mcreator.ui">MCreator</a>&nbsp;mcreator,
- <a href="../../workspace/WorkspacePanel.html" title="class in net.mcreator.ui.workspace">WorkspacePanel</a>&nbsp;workspacePanel)</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(net.mcreator.ui.MCreator,java.util.function.Supplier)" class="member-name-link">ResourcePackEditor</a><wbr>(<a href="../../MCreator.html" title="class in net.mcreator.ui">MCreator</a>&nbsp;mcreator,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;filterProvider)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -174,11 +174,14 @@ implements <a href="../../workspace/IReloadableFilterable.html" title="interface
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refilterElements()" class="member-name-link">refilterElements</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#importExternalFile(java.io.File)" class="member-name-link">importExternalFile</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadElements()" class="member-name-link">reloadElements</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refilterElements()" class="member-name-link">refilterElements</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reloadElements()" class="member-name-link">reloadElements</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -209,11 +212,11 @@ implements <a href="../../workspace/IReloadableFilterable.html" title="interface
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(net.mcreator.ui.MCreator,net.mcreator.ui.workspace.WorkspacePanel)">
+<section class="detail" id="&lt;init&gt;(net.mcreator.ui.MCreator,java.util.function.Supplier)">
 <h3>ResourcePackEditor</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ResourcePackEditor</span><wbr><span class="parameters">(<a href="../../MCreator.html" title="class in net.mcreator.ui">MCreator</a>&nbsp;mcreator,
  @Nullable
- <a href="../../workspace/WorkspacePanel.html" title="class in net.mcreator.ui.workspace">WorkspacePanel</a>&nbsp;workspacePanel)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/function/Supplier.html" title="class or interface in java.util.function" class="external-link">Supplier</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;filterProvider)</span></div>
 </section>
 </li>
 </ul>
@@ -242,6 +245,12 @@ implements <a href="../../workspace/IReloadableFilterable.html" title="interface
 <dt>Specified by:</dt>
 <dd><code><a href="../../workspace/IReloadableFilterable.html#refilterElements()">refilterElements</a></code>&nbsp;in interface&nbsp;<code><a href="../../workspace/IReloadableFilterable.html" title="interface in net.mcreator.ui.workspace">IReloadableFilterable</a></code></dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="importExternalFile(java.io.File)">
+<h3>importExternalFile</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">importExternalFile</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/File.html" title="class or interface in java.io" class="external-link">File</a>&nbsp;file)</span></div>
 </section>
 </li>
 </ul>
